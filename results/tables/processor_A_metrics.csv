@@ -1,0 +1,2 @@
+Processor,Num_Qubits,Num_Edges,Avg_Degree,Diameter,Avg_Path_Length,Algebraic_Connectivity,Compiled_Depth,Logical_CX,Compiled_CX,Inferred_SWAPs,CX_Expansion_Ratio,Exact_FCI_Energy,VQE_Ideal_Energy,Noisy_Energy,Noisy_SE,Noisy_Error
+Processor A,5,4,1.6,3,1.8,0.5188,12,5,5,0,1.0,-1.1373052000000037,-1.1369942211287,-0.4268058977539062,0.003106459332174047,0.7104993022460975

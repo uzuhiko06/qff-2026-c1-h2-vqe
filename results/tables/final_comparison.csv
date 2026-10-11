@@ -1,0 +1,12 @@
+Metric,Processor A,Processor B,Difference (B - A),Architectural Interpretation
+Physical Qubits,5,9,4,"Processor B has 4 more physical qubits, providing more candidate subgraphs."
+Physical Edges,4,12,8,Processor B offers 3x the connectivity edges of Processor A.
+Average Node Degree,1.6,2.667,1.067,Higher node degree in B reduces bottlenecking at central nodes.
+Graph Diameter,3,4,1,Processor B has a smaller diameter despite having nearly twice the qubits.
+Avg Shortest Path Length,1.8,1.944,0.144,Qubits are closer on average on Processor B.
+Algebraic Connectivity (lambda_2),0.5188,0.6431,0.1243,Significantly higher lambda_2 in B indicates superior global routing robustness.
+Compiled Circuit Depth,12,12,0,Routing on Processor A causes greater depth inflation.
+Compiled 2Q (CX) Gates,5,5,0,SWAP decomposition on tree topology injects extra CX gates on Processor A.
+Inferred SWAPs,0,0,0,Each SWAP expands to 3 CX gates; Processor B enables more direct mappings.
+Noisy Energy (Hartree),-0.42681,0.32691,+0.75371,Fewer CX gates and lower depth on Processor B preserve quantum state fidelity.
+Noisy Energy Error (mHa),710.50 mHa,1464.21 mHa,+753.71 mHa,Processor B reduces noise-induced energy deviation.

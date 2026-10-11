@@ -1,0 +1,16 @@
+{
+  "name": "H2_2qubit_ParityTapered",
+  "num_qubits": 2,
+  "mapping": "Parity_Tapered_Z2",
+  "bond_length_angstrom": 0.7414,
+  "nuclear_repulsion_energy": 0.719969,
+  "exact_ground_state_energy": -1.1373052,
+  "chemical_accuracy_hartree": 0.0015936,
+  "pauli_terms": {
+    "II": -0.3324042,
+    "IZ":  0.3979370,
+    "ZI": -0.3979370,
+    "ZZ": -0.0112800,
+    "XX":  0.1809310
+  }
+}

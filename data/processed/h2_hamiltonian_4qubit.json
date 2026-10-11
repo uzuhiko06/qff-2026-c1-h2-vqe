@@ -1,0 +1,26 @@
+{
+  "name": "H2_4qubit_JordanWigner",
+  "num_qubits": 4,
+  "mapping": "Jordan-Wigner",
+  "bond_length_angstrom": 0.7414,
+  "nuclear_repulsion_energy": 0.719969,
+  "exact_ground_state_energy": -1.1373052,
+  "chemical_accuracy_hartree": 0.0015936,
+  "pauli_terms": {
+    "IIII": -0.0118452,
+    "ZIII":  0.171201,
+    "IZII": -0.222797,
+    "IIZI":  0.171201,
+    "IIIZ": -0.222797,
+    "ZZII":  0.120546,
+    "ZIZI":  0.168623,
+    "ZIIZ":  0.165869,
+    "IZZI":  0.165869,
+    "IZIZ":  0.120546,
+    "IIZZ":  0.174349,
+    "XXYY": -0.045321,
+    "YYXX": -0.045321,
+    "XYYX":  0.045321,
+    "YXXY":  0.045321
+  }
+}
