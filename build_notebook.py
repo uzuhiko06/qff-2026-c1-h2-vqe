@@ -30,7 +30,7 @@ def create_main_notebook(output_path: str):
 ## Problem Statement C1: Molecular Ground-State Energy ($H_2$)
 ### Geometry-Aware Quantum Computing & Processor A/B Benchmarking
 
-**Team:** QFF Quantum Chemists  
+**Team:** Straw Hats Team  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  
 **Problem Statement Code:** C1  
 **Baseline Goal:** Compute the ground-state energy of the $H_2$ molecule at equilibrium ($R = 0.7414$ Å) within Chemical Accuracy ($0.0016$ Hartree), benchmark on Processor A and Processor B, and quantify architectural routing and noise trade-offs.

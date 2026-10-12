@@ -146,7 +146,7 @@ Our Phase 1 analysis establishes a clear foundation for the Phase 2 onsite hacka
 
 ## 👥 Participant Information & Declarations
 
-- **Team Name:** QFF Quantum Chemists
+- **Team Name:** Straw Hats Team
 - **Track:** Quantum Chemistry
 - **Problem Statement:** C1 — Molecular Ground-State Energy ($H_2$)
 - **Institution:** SRM University-AP (Qiskit Fall Fest 2026)

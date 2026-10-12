@@ -1,5 +1,6 @@
 # Technical Report: Algorithm-Architecture Co-Design for Molecular Ground-State Energy ($H_2$)
 
+**Team Name:** Straw Hats Team  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  
 **Problem Statement Code:** PS-C1  
 **Hackathon:** Qiskit Fall Fest 2026 (SRM University-AP)  
