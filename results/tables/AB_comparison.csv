@@ -8,5 +8,5 @@ Algebraic Connectivity (lambda_2),0.5188,0.6431,0.1243,Significantly higher lamb
 Compiled Circuit Depth,12,12,0,Routing on Processor A causes greater depth inflation.
 Compiled 2Q (CX) Gates,5,5,0,SWAP decomposition on tree topology injects extra CX gates on Processor A.
 Inferred SWAPs,0,0,0,Each SWAP expands to 3 CX gates; Processor B enables more direct mappings.
-Noisy Energy (Hartree),-0.42681,0.32691,+0.75371,Fewer CX gates and lower depth on Processor B preserve quantum state fidelity.
+Noisy Energy (Hartree),-0.42681,0.32691,0.75371,Fewer CX gates and lower depth on Processor B preserve quantum state fidelity.
 Noisy Energy Error (mHa),710.50 mHa,1464.21 mHa,+753.71 mHa,Processor B reduces noise-induced energy deviation.
