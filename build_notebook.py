@@ -30,7 +30,7 @@ def create_main_notebook(output_path: str):
 ## Problem Statement C1: Molecular Ground-State Energy ($H_2$)
 ### Geometry-Aware Quantum Computing & Processor A/B Benchmarking
 
-**Team:** Straw Hats Team  
+**Team:** STRAW HATS  
 **Institution:** Vijaya Institute of Technology for Women  
 **Host Institution:** SRM University-AP (Qiskit Fall Fest 2026)  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  

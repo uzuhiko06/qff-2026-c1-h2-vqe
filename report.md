@@ -1,6 +1,6 @@
 # Technical Report: Algorithm-Architecture Co-Design for Molecular Ground-State Energy ($H_2$)
 
-**Team Name:** Straw Hats Team  
+**Team Name:** STRAW HATS  
 **Institution:** Vijaya Institute of Technology for Women  
 **Host Institution & Event:** SRM University-AP (Qiskit Fall Fest 2026)  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  

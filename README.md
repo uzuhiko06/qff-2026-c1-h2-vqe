@@ -76,7 +76,7 @@ qff-2026-c1-h2-vqe/
 ### 1. Environment Setup
 Clone the repository and install dependencies in a clean virtual environment:
 ```bash
-git clone https://github.com/your-username/qff-2026-c1-h2-vqe.git
+git clone https://github.com/uzuhiko06/qff-2026-c1-h2-vqe.git
 cd qff-2026-c1-h2-vqe
 
 # Install requirements
@@ -146,7 +146,7 @@ Our Phase 1 analysis establishes a clear foundation for the Phase 2 onsite hacka
 
 ## 👥 Participant Information & Declarations
 
-- **Team Name:** Straw Hats Team
+- **Team Name:** STRAW HATS
 - **Institution:** Vijaya Institute of Technology for Women
 - **Host Institution & Event:** SRM University-AP (Qiskit Fall Fest 2026)
 - **Track:** Quantum Chemistry

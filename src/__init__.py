@@ -4,4 +4,4 @@ Algorithm <-> Architecture Co-Design Suite
 """
 
 __version__ = "1.0.0"
-__author__ = "Straw Hats Team"
+__author__ = "STRAW HATS"
