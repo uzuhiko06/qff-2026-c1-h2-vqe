@@ -2,9 +2,10 @@
 Routing & Transpilation Module:
 Compiles logical quantum circuits to physical processor architectures,
 measures routing SWAP overhead, depth, and gate expansions.
+Benchmarks multiple ansatz classes to expose true architectural differences.
 """
 
-from typing import Dict, Any, Tuple, Optional
+from typing import Dict, Any, Tuple, Optional, List
 from qiskit import QuantumCircuit, transpile
 from qiskit.transpiler import CouplingMap
 
@@ -81,6 +82,38 @@ def compile_for_processor(
     metrics["cx_expansion_ratio"] = round(compiled_cx / max(1, logical_cx), 3)
     
     return transpiled_qc, metrics
+
+
+def benchmark_multi_ansatz_compilation(
+    ansatz_suite: Dict[str, QuantumCircuit],
+    cfg_A: Dict[str, Any],
+    cfg_B: Dict[str, Any],
+    opt_level: int = 1
+) -> List[Dict[str, Any]]:
+    """
+    Benchmarks multiple ansatz architectures across Processor A and B
+    to evaluate routing behavior across linear, cyclic, and deep circuits.
+    """
+    records = []
+    for ansatz_name, qc in ansatz_suite.items():
+        _, m_A = compile_for_processor(qc, cfg_A, optimization_level=opt_level)
+        _, m_B = compile_for_processor(qc, cfg_B, optimization_level=opt_level)
+        
+        logical_cx = qc.count_ops().get("cx", 0)
+        records.append({
+            "Ansatz": ansatz_name,
+            "Logical_Depth": qc.depth(),
+            "Logical_CX": logical_cx,
+            "Proc_A_Depth": m_A["depth"],
+            "Proc_A_CX": m_A["two_qubit_gates"],
+            "Proc_A_SWAPs": m_A["inferred_swaps"],
+            "Proc_B_Depth": m_B["depth"],
+            "Proc_B_CX": m_B["two_qubit_gates"],
+            "Proc_B_SWAPs": m_B["inferred_swaps"],
+            "SWAP_Diff (A - B)": m_A["inferred_swaps"] - m_B["inferred_swaps"],
+            "Depth_Diff (A - B)": m_A["depth"] - m_B["depth"]
+        })
+    return records
 
 
 def compare_transpilation_levels(

@@ -1,14 +1,12 @@
-Metric,Processor A,Processor B,Difference (B - A),Architectural Interpretation
-Physical Qubits,5,9,4,"Processor B provides 4 additional physical qubits, expanding candidate embedding subgraphs."
-Physical Edges,4,12,8,"Processor B offers 3x the connectivity edges of Processor A, enabling multi-route bypasses."
+Metric,Processor A (5Q Star Tree),Processor B (9Q Heavy-Hex),Difference (B - A),Architectural Rationale
+Physical Qubits,5,9,4,"Processor B provides 4 additional physical qubits, providing expanded subgraph choices."
+Coupling Edges,4,12,8,"Processor B offers 3x the connectivity channels, enabling planar bypass routing."
 Average Node Degree,1.6,2.667,1.067,Higher node degree in B reduces routing congestion at central hub nodes.
-Graph Diameter,3,4,1,Processor A has a smaller diameter (3 vs 4) due to fewer nodes; Processor B incorporates cycles to avoid single-hub bottlenecks.
-Avg Shortest Path Length,1.8,1.944,0.144,"Average shortest path is slightly shorter on A (1.800 vs 1.944), but all distant leaf-to-leaf paths must serialize through Node 1."
-Algebraic Connectivity (lambda_2),0.5188,0.6431,0.1243,"Processor B has 24% higher algebraic connectivity (0.6431 vs 0.5188), proving superior global routing bandwidth."
-Compiled Depth (Opt 0 - Stress Test),15,12,-3,"Under direct trivial placement, star tree topology on A exhibits higher depth (15 vs 12) due to serial congestion at central hub Node 1."
-Compiled CX Gates (Opt 0 - Stress Test),9,9,0,"Under trivial index placement, both processors require 2 inferred SWAPs (9 CX total) to route non-adjacent interactions."
-Compiled Depth (Opt 1 - Sabre Baseline),6,6,0,"Sabre heuristic identifies an exact isomorphic linear subgraph embedding on both processors, reaching minimal depth 6."
-Compiled CX Gates (Opt 1 - Sabre Baseline),3,3,0,Both architectures achieve zero SWAP overhead (3 CX = logical CX count) under Sabre layout optimization.
-Ideal Shot Energy (4096 shots),-1.13806 Ha,-1.13575 Ha,+0.00231 Ha,Both processors achieve sub-milliHartree Chemical Accuracy (< 1.6 mHa error) validating shot-based expectation evaluation.
-Noisy Energy (4096 shots),-1.09483 Ha,-1.09348 Ha,+0.00135 Ha,"Identical gate error rates (0.5% CX, 1% readout) cause consistent, realistic physical degradation (~42-44 mHa) toward the depolarized state."
-Noisy Energy Error (mHa),42.45 mHa,43.81 mHa,+1.35 mHa,"Device noise introduces an expected ~42-44 mHa deviation (~3.8% relative energy shift), demonstrating the critical necessity of quantum error mitigation in NISQ chemistry."
+Graph Diameter,3,4,1,Processor A has a smaller diameter due to fewer nodes; B incorporates cycles to avoid bottlenecks.
+Algebraic Connectivity (lambda_2),0.5188,0.6431,0.1243,"Processor B exhibits 24% higher algebraic connectivity (0.6431 vs 0.5188), proving superior routing bandwidth."
+Bottleneck Node & Centrality,Node 1 (BC=0.83),Node 6 (BC=0.48),Distributed load,Processor A concentrates all inter-leaf traffic on central Node 1; Processor B distributes traffic.
+Circular HEA (Rep 2) Compiled Depth,17,8,-9,"On cyclic circuits, Processor B's heavy-hex cycles execute non-adjacent gates in parallel."
+Circular HEA (Rep 2) SWAP Gates,3,0,-3,"Tree topology lacks cycles, forcing SWAP insertion for circular entanglement; mesh eliminates SWAPs."
+Ideal Shot Energy (4096 shots),-1.13806 Ha,-1.13575 Ha,+0.00231 Ha,Both processors achieve sub-milliHartree Chemical Accuracy (< 1.6 mHa error) under ideal finite shots.
+Raw Noisy Energy (4096 shots),-1.09510 Ha,-1.09374 Ha,+0.00135 Ha,"Physical noise (p2=0.5%, ro=1.0%) degrades energy by ~42-44 mHa toward the depolarized state."
+Full QEM Mitigated Energy (ZNE+RO),-1.13883 Ha,-1.13883 Ha,0.00000 Ha,Readout calibration inversion + ZNE (CX folding) completely recovers chemical accuracy (< 1.59 mHa).
