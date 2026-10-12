@@ -31,6 +31,8 @@ def create_main_notebook(output_path: str):
 ### Geometry-Aware Quantum Computing & Processor A/B Benchmarking
 
 **Team:** Straw Hats Team  
+**Institution:** Vijaya Institute of Technology for Women  
+**Host Institution:** SRM University-AP (Qiskit Fall Fest 2026)  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  
 **Problem Statement Code:** C1  
 **Baseline Goal:** Compute the ground-state energy of the $H_2$ molecule at equilibrium ($R = 0.7414$ Å) within Chemical Accuracy ($0.0016$ Hartree), benchmark on Processor A and Processor B, and quantify architectural routing and noise trade-offs.

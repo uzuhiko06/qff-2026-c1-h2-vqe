@@ -147,7 +147,8 @@ Our Phase 1 analysis establishes a clear foundation for the Phase 2 onsite hacka
 ## 👥 Participant Information & Declarations
 
 - **Team Name:** Straw Hats Team
+- **Institution:** Vijaya Institute of Technology for Women
+- **Host Institution & Event:** SRM University-AP (Qiskit Fall Fest 2026)
 - **Track:** Quantum Chemistry
 - **Problem Statement:** C1 — Molecular Ground-State Energy ($H_2$)
-- **Institution:** SRM University-AP (Qiskit Fall Fest 2026)
 - **AI Assistance Disclosure:** In accordance with Section 11 of the Participant Guide, AI assistance was utilized as a pair programmer for codebase structuring, graph visualization scripts, and documentation synthesis. All algorithms, mathematical proofs, and experimental results were verified and validated on local Qiskit/Aer simulators.
