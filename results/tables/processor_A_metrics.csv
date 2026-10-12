@@ -1,2 +1,2 @@
 Processor,Num_Qubits,Num_Edges,Avg_Degree,Diameter,Avg_Path_Length,Algebraic_Connectivity,Compiled_Depth_Opt0,Compiled_CX_Opt0,Inferred_SWAPs_Opt0,Compiled_Depth_Opt1,Compiled_CX_Opt1,Inferred_SWAPs_Opt1,Exact_FCI_Energy,VQE_Statevector_Energy,Ideal_Shot_Energy,Ideal_SE,Ideal_Error_mHa,Noisy_Energy,Noisy_SE,Noisy_Error_mHa
-Processor A,5,4,1.6,3,1.8,0.5188,18,11,2,12,5,0,-1.1373051999999961,-1.1373045841999727,-1.1373273293945314,0.0014162390831103495,0.02,-1.0814054319335937,0.0030682723482892064,55.9
+Processor A,5,4,1.6,3,1.8,0.5188,15,9,2,6,3,0,-1.1372848388199266,-1.137284838786065,-1.1380622294921876,0.0019509962116538318,0.78,-1.0948311767578125,0.0031331977816972676,42.45

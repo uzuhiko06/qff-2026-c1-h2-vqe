@@ -1,11 +1,11 @@
 Topology,Class,Opt_Level,Depth,CX_Count,Inferred_SWAPs
-5Q Linear Chain,Baseline 5Q,0,17,8,1
-5Q Linear Chain,Baseline 5Q,1,12,5,0
-5Q Ring,Baseline 5Q,0,17,8,1
-5Q Ring,Baseline 5Q,1,12,5,0
-5Q Star Tree (Processor A),Designed 5Q,0,18,11,2
-5Q Star Tree (Processor A),Designed 5Q,1,12,5,0
-9Q 3x3 Grid Mesh,Alternative 9Q,0,20,11,2
-9Q 3x3 Grid Mesh,Alternative 9Q,1,12,5,0
-9Q Heavy-Hex (Processor B),Designed 9Q,0,17,8,1
-9Q Heavy-Hex (Processor B),Designed 9Q,1,12,5,0
+5Q Linear Chain,Baseline 5Q,0,12,9,2
+5Q Linear Chain,Baseline 5Q,1,6,3,0
+5Q Ring,Baseline 5Q,0,12,9,2
+5Q Ring,Baseline 5Q,1,6,3,0
+5Q Star Tree (Processor A),Designed 5Q,0,15,9,2
+5Q Star Tree (Processor A),Designed 5Q,1,6,3,0
+9Q 3x3 Grid Mesh,Alternative 9Q,0,12,6,1
+9Q 3x3 Grid Mesh,Alternative 9Q,1,6,3,0
+9Q Heavy-Hex (Processor B),Designed 9Q,0,12,9,2
+9Q Heavy-Hex (Processor B),Designed 9Q,1,6,3,0

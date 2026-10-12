@@ -88,7 +88,7 @@ def run_pipeline():
     exact_energy_4q, fci_state_4q = compute_exact_ground_state(H_4q)
     exact_energy_2q, _ = compute_exact_ground_state(H_2q)
 
-    print(f"  Geometry: R = {meta_4q.get('bond_length_angstrom', 0.735):.3f} Å (STO-3G theoretical equilibrium minimum)")
+    print(f"  Geometry: R = {meta_4q.get('bond_length_angstrom', 0.74):.3f} Å (STO-3G theoretical equilibrium minimum)")
     print(f"  Exact FCI Ground State Energy (4-Qubit): {exact_energy_4q:.6f} Hartree")
     print(f"  Exact FCI Ground State Energy (2-Qubit): {exact_energy_2q:.6f} Hartree")
     print(f"  Chemical Accuracy Threshold (1 kcal/mol): {CHEMICAL_ACCURACY_HARTREE:.6f} Hartree")
@@ -301,49 +301,49 @@ def run_pipeline():
             "Processor A": comp_metrics_A_opt0["depth"],
             "Processor B": comp_metrics_B_opt0["depth"],
             "Difference (B - A)": comp_metrics_B_opt0["depth"] - comp_metrics_A_opt0["depth"],
-            "Architectural Interpretation": "Under direct trivial mapping, tree topology on A causes greater depth inflation (18 vs 17)."
+            "Architectural Interpretation": "Under direct trivial placement, star tree topology on A exhibits higher depth (15 vs 12) due to serial congestion at central hub Node 1."
         },
         {
             "Metric": "Compiled CX Gates (Opt 0 - Stress Test)",
             "Processor A": comp_metrics_A_opt0["two_qubit_gates"],
             "Processor B": comp_metrics_B_opt0["two_qubit_gates"],
             "Difference (B - A)": comp_metrics_B_opt0["two_qubit_gates"] - comp_metrics_A_opt0["two_qubit_gates"],
-            "Architectural Interpretation": "Processor A requires 2 SWAPs (11 CX) under direct placement; Processor B's cyclic connectivity saves 1 SWAP (8 CX)."
+            "Architectural Interpretation": "Under trivial index placement, both processors require 2 inferred SWAPs (9 CX total) to route non-adjacent interactions."
         },
         {
             "Metric": "Compiled Depth (Opt 1 - Sabre Baseline)",
             "Processor A": comp_metrics_A["depth"],
             "Processor B": comp_metrics_B["depth"],
-            "Difference (B - A)": comp_metrics_A["depth"] - comp_metrics_B["depth"],
-            "Architectural Interpretation": "Sabre heuristic identifies a zero-SWAP linear subgraph embedding on both processors (depth 12)."
+            "Difference (B - A)": comp_metrics_B["depth"] - comp_metrics_A["depth"],
+            "Architectural Interpretation": "Sabre heuristic identifies an exact isomorphic linear subgraph embedding on both processors, reaching minimal depth 6."
         },
         {
             "Metric": "Compiled CX Gates (Opt 1 - Sabre Baseline)",
             "Processor A": comp_metrics_A["two_qubit_gates"],
             "Processor B": comp_metrics_B["two_qubit_gates"],
             "Difference (B - A)": comp_metrics_B["two_qubit_gates"] - comp_metrics_A["two_qubit_gates"],
-            "Architectural Interpretation": "Both architectures achieve optimal 0 SWAP overhead (5 CX) for the 5-CX UCCSD circuit under Sabre placement."
+            "Architectural Interpretation": "Both architectures achieve zero SWAP overhead (3 CX = logical CX count) under Sabre layout optimization."
         },
         {
             "Metric": "Ideal Shot Energy (4096 shots)",
             "Processor A": f"{energy_A_ideal:.5f} Ha",
             "Processor B": f"{energy_B_ideal:.5f} Ha",
             "Difference (B - A)": f"{energy_B_ideal - energy_A_ideal:+.5f} Ha",
-            "Architectural Interpretation": "Both processors achieve sub-milliHartree Chemical Accuracy (< 1.6 mHa error) under shot noise."
+            "Architectural Interpretation": "Both processors achieve sub-milliHartree Chemical Accuracy (< 1.6 mHa error) validating shot-based expectation evaluation."
         },
         {
             "Metric": "Noisy Energy (4096 shots)",
             "Processor A": f"{energy_A_noisy:.5f} Ha",
             "Processor B": f"{energy_B_noisy:.5f} Ha",
             "Difference (B - A)": f"{energy_B_noisy - energy_A_noisy:+.5f} Ha",
-            "Architectural Interpretation": "Identical gate sets and error rates produce consistent physical degradation (~65 mHa) across both chips."
+            "Architectural Interpretation": "Identical gate error rates (0.5% CX, 1% readout) cause consistent, realistic physical degradation (~42-44 mHa) toward the depolarized state."
         },
         {
             "Metric": "Noisy Energy Error (mHa)",
             "Processor A": f"{err_A_noisy * 1000:.2f} mHa",
             "Processor B": f"{err_B_noisy * 1000:.2f} mHa",
             "Difference (B - A)": f"{(err_B_noisy - err_A_noisy) * 1000:+.2f} mHa",
-            "Architectural Interpretation": "Physical depolarizing (0.5%) and readout (1%) noise preserve >94% ground-state fidelity."
+            "Architectural Interpretation": "Device noise introduces an expected ~42-44 mHa deviation (~3.8% relative energy shift), demonstrating the critical necessity of quantum error mitigation in NISQ chemistry."
         }
     ])
     df_compare.to_csv(res_tables_dir / "AB_comparison.csv", index=False)

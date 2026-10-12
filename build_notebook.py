@@ -38,7 +38,7 @@ def create_main_notebook(output_path: str):
 **Host Institution:** SRM University-AP (Qiskit Fall Fest 2026)  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  
 **Problem Statement Code:** PS-C1  
-**Baseline Goal:** Compute the ground-state energy of the $H_2$ molecule at equilibrium ($R = 0.735$ Å / $1.389$ Bohr) within Chemical Accuracy ($0.0016$ Hartree), benchmark on Processor A and Processor B, and quantify architectural routing and noise trade-offs.
+**Baseline Goal:** Compute the ground-state energy of the $H_2$ molecule at equilibrium ($R = 0.74$ Å / $1.398$ Bohr) within Chemical Accuracy ($0.0016$ Hartree), benchmark on Processor A and Processor B, and quantify architectural routing and noise trade-offs.
 """)
 
     # Section 1

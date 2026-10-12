@@ -1,35 +1,35 @@
 {
   "molecule": "H2",
   "basis": "sto-3g",
-  "description": "STO-3G molecular electronic integrals and nuclear repulsion for H2 at various bond lengths (equilibrium at R=0.7414 A).",
-  "equilibrium_bond_length_angstrom": 0.7414,
+  "description": "STO-3G molecular electronic integrals and nuclear repulsion for H2 at various bond lengths (equilibrium at R=0.74 A per PS-C1 specification).",
+  "equilibrium_bond_length_angstrom": 0.74,
   "chemical_accuracy_hartree": 0.0015936,
   "equilibrium_data": {
-    "bond_length_angstrom": 0.7414,
-    "nuclear_repulsion_energy_hartree": 0.719969,
-    "fci_exact_ground_state_energy_hartree": -1.137306,
-    "hartree_fock_energy_hartree": -1.116668,
+    "bond_length_angstrom": 0.74,
+    "nuclear_repulsion_energy_hartree": 0.715104,
+    "fci_exact_ground_state_energy_hartree": -1.1372848,
+    "hartree_fock_energy_hartree": -1.116759,
     "one_body_integrals_mo": [
-      [-1.25278, 0.0],
-      [0.0, -0.47593]
+      [-1.252946, 0.0],
+      [0.0, -0.475934]
     ],
     "two_body_integrals_mo": {
-      "g_0000": 0.67449,
-      "g_0011": 0.66347,
-      "g_0110": 0.18129,
-      "g_1111": 0.69740
+      "g_0000": 0.674493,
+      "g_0011": 0.663472,
+      "g_0110": 0.181210,
+      "g_1111": 0.697393
     }
   },
   "pes_scan_points": [
-    {"bond_length_angstrom": 0.40, "fci_exact_energy_hartree": -1.0142, "nuclear_repulsion": 1.3323},
-    {"bond_length_angstrom": 0.50, "fci_exact_energy_hartree": -1.0963, "nuclear_repulsion": 1.0658},
-    {"bond_length_angstrom": 0.60, "fci_exact_energy_hartree": -1.1294, "nuclear_repulsion": 0.8882},
-    {"bond_length_angstrom": 0.70, "fci_exact_energy_hartree": -1.1368, "nuclear_repulsion": 0.7613},
-    {"bond_length_angstrom": 0.7414, "fci_exact_energy_hartree": -1.1373, "nuclear_repulsion": 0.7200},
-    {"bond_length_angstrom": 0.80, "fci_exact_energy_hartree": -1.1341, "nuclear_repulsion": 0.6661},
-    {"bond_length_angstrom": 1.00, "fci_exact_energy_hartree": -1.1011, "nuclear_repulsion": 0.5329},
-    {"bond_length_angstrom": 1.40, "fci_exact_energy_hartree": -1.0197, "nuclear_repulsion": 0.3807},
-    {"bond_length_angstrom": 2.00, "fci_exact_energy_hartree": -0.9472, "nuclear_repulsion": 0.2665},
-    {"bond_length_angstrom": 2.50, "fci_exact_energy_hartree": -0.9360, "nuclear_repulsion": 0.2132}
+    {"bond_length_angstrom": 0.40, "fci_exact_energy_hartree": -0.9141, "nuclear_repulsion": 1.32294},
+    {"bond_length_angstrom": 0.50, "fci_exact_energy_hartree": -1.0552, "nuclear_repulsion": 1.05835},
+    {"bond_length_angstrom": 0.60, "fci_exact_energy_hartree": -1.1163, "nuclear_repulsion": 0.88196},
+    {"bond_length_angstrom": 0.70, "fci_exact_energy_hartree": -1.1362, "nuclear_repulsion": 0.75597},
+    {"bond_length_angstrom": 0.74, "fci_exact_energy_hartree": -1.13728, "nuclear_repulsion": 0.71510},
+    {"bond_length_angstrom": 0.80, "fci_exact_energy_hartree": -1.1341, "nuclear_repulsion": 0.66147},
+    {"bond_length_angstrom": 1.00, "fci_exact_energy_hartree": -1.1012, "nuclear_repulsion": 0.52918},
+    {"bond_length_angstrom": 1.40, "fci_exact_energy_hartree": -1.0155, "nuclear_repulsion": 0.37798},
+    {"bond_length_angstrom": 2.00, "fci_exact_energy_hartree": -0.9486, "nuclear_repulsion": 0.26459},
+    {"bond_length_angstrom": 2.50, "fci_exact_energy_hartree": -0.9361, "nuclear_repulsion": 0.21167}
   ]
 }
