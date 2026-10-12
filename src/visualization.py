@@ -177,10 +177,10 @@ def plot_noise_energy_comparison(
     plt.title(r"$H_2$ Ground-State Energy Under Noise ($0.5\%$ CX + Readout Error)", fontsize=13, fontweight="bold")
     plt.grid(axis="y", linestyle=":", alpha=0.6)
     
-    # Annotate values
+    # Annotate values inside bars
     for bar, val in zip(bars, energies):
-        plt.text(bar.get_x() + bar.get_width()/2, val - 0.03, f"{val:.4f} Ha",
-                 ha="center", va="top", color="white", fontweight="bold", fontsize=10)
+        plt.text(bar.get_x() + bar.get_width()/2, val / 2, f"{val:.4f} Ha",
+                 ha="center", va="center", color="white", fontweight="bold", fontsize=10)
                  
     plt.tight_layout()
     out = Path(output_path)

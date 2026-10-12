@@ -41,12 +41,13 @@ def evaluate_shot_based_energy(
     hamiltonian: SparsePauliOp,
     param_values: Optional[np.ndarray] = None,
     noise_model: Optional[NoiseModel] = None,
-    shots: int = 2048,
+    shots: int = 4096,
     seed_simulator: int = 42
 ) -> Tuple[float, float]:
     """
     Evaluates energy expectation value by simulating individual Pauli term
     measurements on Qiskit Aer with finite shots and optional noise model.
+    Maps virtual Pauli operators to physical qubits using circuit.layout.
     
     Returns:
         (estimated_energy, standard_error)
@@ -55,6 +56,12 @@ def evaluate_shot_based_energy(
         bound_qc = circuit.assign_parameters(param_values)
     else:
         bound_qc = circuit
+        
+    # Extract virtual-to-physical qubit mapping from transpiler layout
+    if bound_qc.layout is not None:
+        virtual_to_phys = bound_qc.layout.final_index_layout()
+    else:
+        virtual_to_phys = list(range(bound_qc.num_qubits))
         
     sim = AerSimulator(noise_model=noise_model, seed_simulator=seed_simulator)
     
@@ -71,26 +78,22 @@ def evaluate_shot_based_energy(
             total_energy += c
             continue
             
-        # Build measurement circuit in Pauli basis
-        meas_qc = bound_qc.copy()
-        meas_qc.measure_all()
-        
-        # Insert basis change gates before measurement
-        # Note: In Qiskit string, rightmost char corresponds to qubit 0
-        n_q = meas_qc.num_qubits
+        n_q = bound_qc.num_qubits
         basis_change_qc = QuantumCircuit(n_q)
-        active_indices = []
-        for q_idx in range(min(n_q, len(p_str))):
-            p_char = p_str[-(q_idx + 1)]  # reverse for little-endian qubit indexing
+        active_physical_indices = []
+        
+        # Map each virtual qubit's Pauli operator to its assigned PHYSICAL qubit
+        for v_idx in range(len(p_str)):
+            p_char = p_str[-(v_idx + 1)]  # reverse for little-endian qubit indexing
+            p_phys = virtual_to_phys[v_idx]
+            
+            if p_char != "I":
+                active_physical_indices.append(p_phys)
             if p_char == "X":
-                basis_change_qc.h(q_idx)
-                active_indices.append(q_idx)
+                basis_change_qc.h(p_phys)
             elif p_char == "Y":
-                basis_change_qc.sdg(q_idx)
-                basis_change_qc.h(q_idx)
-                active_indices.append(q_idx)
-            elif p_char == "Z":
-                active_indices.append(q_idx)
+                basis_change_qc.sdg(p_phys)
+                basis_change_qc.h(p_phys)
                 
         # Compose basis change and run
         full_qc = bound_qc.compose(basis_change_qc)
@@ -101,14 +104,10 @@ def evaluate_shot_based_energy(
         result = job.result()
         counts = result.get_counts()
         
-        # Calculate expectation value for this Pauli string
+        # Calculate expectation value using only active physical qubits
         exp_val = 0.0
         for bitstring, count in counts.items():
-            # bitstring is reversed in Qiskit output
-            parity = 0
-            for q_idx in active_indices:
-                if bitstring[-(q_idx + 1)] == '1':
-                    parity += 1
+            parity = sum(1 for p_phys in active_physical_indices if bitstring[-(p_phys + 1)] == '1')
             sign = -1 if (parity % 2 == 1) else 1
             exp_val += sign * (count / shots)
             

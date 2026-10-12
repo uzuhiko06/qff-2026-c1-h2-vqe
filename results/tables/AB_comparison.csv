@@ -1,12 +1,14 @@
 Metric,Processor A,Processor B,Difference (B - A),Architectural Interpretation
-Physical Qubits,5,9,4,"Processor B has 4 more physical qubits, providing more candidate subgraphs."
-Physical Edges,4,12,8,Processor B offers 3x the connectivity edges of Processor A.
-Average Node Degree,1.6,2.667,1.067,Higher node degree in B reduces bottlenecking at central nodes.
-Graph Diameter,3,4,1,Processor B has a smaller diameter despite having nearly twice the qubits.
-Avg Shortest Path Length,1.8,1.944,0.144,Qubits are closer on average on Processor B.
-Algebraic Connectivity (lambda_2),0.5188,0.6431,0.1243,Significantly higher lambda_2 in B indicates superior global routing robustness.
-Compiled Circuit Depth,12,12,0,Routing on Processor A causes greater depth inflation.
-Compiled 2Q (CX) Gates,5,5,0,SWAP decomposition on tree topology injects extra CX gates on Processor A.
-Inferred SWAPs,0,0,0,Each SWAP expands to 3 CX gates; Processor B enables more direct mappings.
-Noisy Energy (Hartree),-0.42681,0.32691,0.75371,Fewer CX gates and lower depth on Processor B preserve quantum state fidelity.
-Noisy Energy Error (mHa),710.50 mHa,1464.21 mHa,+753.71 mHa,Processor B reduces noise-induced energy deviation.
+Physical Qubits,5,9,4,"Processor B provides 4 additional physical qubits, expanding candidate embedding subgraphs."
+Physical Edges,4,12,8,"Processor B offers 3x the connectivity edges of Processor A, enabling multi-route bypasses."
+Average Node Degree,1.6,2.667,1.067,Higher node degree in B reduces routing congestion at central hub nodes.
+Graph Diameter,3,4,1,Processor A has a smaller diameter (3 vs 4) due to fewer nodes; Processor B incorporates cycles to avoid single-hub bottlenecks.
+Avg Shortest Path Length,1.8,1.944,0.144,"Average shortest path is slightly shorter on A (1.800 vs 1.944), but all distant leaf-to-leaf paths must serialize through Node 1."
+Algebraic Connectivity (lambda_2),0.5188,0.6431,0.1243,"Processor B has 24% higher algebraic connectivity (0.6431 vs 0.5188), proving superior global routing bandwidth."
+Compiled Depth (Opt 0 - Stress Test),18,17,-1,"Under direct trivial mapping, tree topology on A causes greater depth inflation (18 vs 17)."
+Compiled CX Gates (Opt 0 - Stress Test),11,8,-3,Processor A requires 2 SWAPs (11 CX) under direct placement; Processor B's cyclic connectivity saves 1 SWAP (8 CX).
+Compiled Depth (Opt 1 - Sabre Baseline),12,12,0,Sabre heuristic identifies a zero-SWAP linear subgraph embedding on both processors (depth 12).
+Compiled CX Gates (Opt 1 - Sabre Baseline),5,5,0,Both architectures achieve optimal 0 SWAP overhead (5 CX) for the 5-CX UCCSD circuit under Sabre placement.
+Ideal Shot Energy (4096 shots),-1.13733 Ha,-1.13737 Ha,-0.00004 Ha,Both processors achieve sub-milliHartree Chemical Accuracy (< 1.6 mHa error) under shot noise.
+Noisy Energy (4096 shots),-1.08141 Ha,-1.08526 Ha,-0.00386 Ha,Identical gate sets and error rates produce consistent physical degradation (~65 mHa) across both chips.
+Noisy Energy Error (mHa),55.90 mHa,52.04 mHa,-3.86 mHa,Physical depolarizing (0.5%) and readout (1%) noise preserve >94% ground-state fidelity.

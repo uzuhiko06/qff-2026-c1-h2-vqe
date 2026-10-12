@@ -97,3 +97,73 @@ def compare_transpilation_levels(
         )
         results[opt_level] = metrics
     return results
+
+
+def run_topology_ablation(logical_circuit: QuantumCircuit) -> list:
+    """
+    Evaluates candidate topologies for 5-qubit and 9-qubit architectures
+    to demonstrate algorithm-architecture co-design rationale.
+    """
+    candidates = [
+        {
+            "name": "5Q Linear Chain",
+            "num_qubits": 5,
+            "coupling_map": [[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3]],
+            "basis_gates": ["rz", "sx", "x", "cx"],
+            "class": "Baseline 5Q"
+        },
+        {
+            "name": "5Q Ring",
+            "num_qubits": 5,
+            "coupling_map": [[0, 1], [1, 0], [1, 2], [2, 1], [2, 3], [3, 2], [3, 4], [4, 3], [4, 0], [0, 4]],
+            "basis_gates": ["rz", "sx", "x", "cx"],
+            "class": "Baseline 5Q"
+        },
+        {
+            "name": "5Q Star Tree (Processor A)",
+            "num_qubits": 5,
+            "coupling_map": [[0, 1], [1, 0], [1, 2], [2, 1], [1, 3], [3, 1], [3, 4], [4, 3]],
+            "basis_gates": ["rz", "sx", "x", "cx"],
+            "class": "Designed 5Q"
+        },
+        {
+            "name": "9Q 3x3 Grid Mesh",
+            "num_qubits": 9,
+            "coupling_map": [
+                [0, 1], [1, 0], [1, 2], [2, 1],
+                [3, 4], [4, 3], [4, 5], [5, 4],
+                [6, 7], [7, 6], [7, 8], [8, 7],
+                [0, 3], [3, 0], [3, 6], [6, 3],
+                [1, 4], [4, 1], [4, 7], [7, 4],
+                [2, 5], [5, 2], [5, 8], [8, 5]
+            ],
+            "basis_gates": ["rz", "sx", "x", "cx"],
+            "class": "Alternative 9Q"
+        },
+        {
+            "name": "9Q Heavy-Hex (Processor B)",
+            "num_qubits": 9,
+            "coupling_map": [
+                [0, 1], [1, 0], [1, 2], [2, 1], [1, 6], [6, 1],
+                [2, 3], [3, 2], [2, 6], [6, 2], [2, 5], [5, 2],
+                [3, 4], [4, 3], [4, 5], [5, 4], [5, 6], [6, 5],
+                [6, 7], [7, 6], [6, 8], [8, 6], [8, 0], [0, 8]
+            ],
+            "basis_gates": ["rz", "sx", "x", "cx"],
+            "class": "Designed 9Q"
+        }
+    ]
+
+    records = []
+    for cand in candidates:
+        for opt in [0, 1]:
+            _, m = compile_for_processor(logical_circuit, cand, optimization_level=opt)
+            records.append({
+                "Topology": cand["name"],
+                "Class": cand["class"],
+                "Opt_Level": opt,
+                "Depth": m["depth"],
+                "CX_Count": m["two_qubit_gates"],
+                "Inferred_SWAPs": m["inferred_swaps"]
+            })
+    return records

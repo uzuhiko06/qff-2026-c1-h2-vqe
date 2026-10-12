@@ -30,12 +30,15 @@ def create_main_notebook(output_path: str):
 ## Problem Statement C1: Molecular Ground-State Energy ($H_2$)
 ### Geometry-Aware Quantum Computing & Processor A/B Benchmarking
 
-**Team:** STRAW HATS  
+**Team Name:** STRAW HATS  
+**Team Leader:** P. SAHITHI SIVA  
+**Team Member 2:** MD. SANA TAMREEN  
+**Team Member 3:** A. SAI SARANYA  
 **Institution:** Vijaya Institute of Technology for Women  
 **Host Institution:** SRM University-AP (Qiskit Fall Fest 2026)  
 **Track:** Quantum Chemistry (VQE / Ab-Initio)  
-**Problem Statement Code:** C1  
-**Baseline Goal:** Compute the ground-state energy of the $H_2$ molecule at equilibrium ($R = 0.7414$ Å) within Chemical Accuracy ($0.0016$ Hartree), benchmark on Processor A and Processor B, and quantify architectural routing and noise trade-offs.
+**Problem Statement Code:** PS-C1  
+**Baseline Goal:** Compute the ground-state energy of the $H_2$ molecule at equilibrium ($R = 0.735$ Å / $1.389$ Bohr) within Chemical Accuracy ($0.0016$ Hartree), benchmark on Processor A and Processor B, and quantify architectural routing and noise trade-offs.
 """)
 
     # Section 1
@@ -237,7 +240,7 @@ from src.routing import compile_for_processor
 
 # 1. Build and optimize ansatz
 ansatz, theta = build_uccsd_like_ansatz(num_qubits=4)
-vqe_res = run_vqe_optimization(ansatz, H_4q, exact_energy, maxiter=35, method="COBYLA")
+vqe_res = run_vqe_optimization(ansatz, H_4q, exact_energy, maxiter=50, method="COBYLA")
 
 print(f"Optimal VQE Energy: {vqe_res['optimal_energy']:.6f} Hartree")
 print(f"Energy Error vs Exact: {vqe_res['energy_error']:.6f} Hartree")
@@ -248,26 +251,39 @@ bound_qc = ansatz.assign_parameters(vqe_res["optimal_params"])
 comp_A, m_A = compile_for_processor(bound_qc, cfg_A, optimization_level=1)
 comp_B, m_B = compile_for_processor(bound_qc, cfg_B, optimization_level=1)
 
-# 3. Simulate with noise and finite shots (4096 shots)
+# 3. Simulate with ideal finite shots (4096 shots)
 shots = 4096
-e_A_noisy, se_A = evaluate_shot_based_energy(comp_A, H_4q, noise_model=noise_A, shots=shots)
+e_A_ideal, se_A_id = evaluate_shot_based_energy(comp_A, H_4q, noise_model=None, shots=shots)
+e_B_ideal, se_B_id = evaluate_shot_based_energy(comp_B, H_4q, noise_model=None, shots=shots)
+
+print(f"Processor A Ideal: {e_A_ideal:.6f} ± {se_A_id:.6f} Ha (Error: {abs(e_A_ideal - exact_energy)*1000:.2f} mHa)")
+print(f"Processor B Ideal: {e_B_ideal:.6f} ± {se_B_id:.6f} Ha (Error: {abs(e_B_ideal - exact_energy)*1000:.2f} mHa)")
+
+# 4. Simulate with challenge noise model (4096 shots)
 noise_B = build_noise_model(cfg_B)
+e_A_noisy, se_A = evaluate_shot_based_energy(comp_A, H_4q, noise_model=noise_A, shots=shots)
 e_B_noisy, se_B = evaluate_shot_based_energy(comp_B, H_4q, noise_model=noise_B, shots=shots)
 
-print(f"\\nProcessor A Noisy Energy: {e_A_noisy:.5f} ± {se_A:.5f} Ha (Error: {abs(e_A_noisy - exact_energy):.5f} Ha)")
-print(f"Processor B Noisy Energy: {e_B_noisy:.5f} ± {se_B:.5f} Ha (Error: {abs(e_B_noisy - exact_energy):.5f} Ha)")
+print(f"Processor A Noisy Energy: {e_A_noisy:.6f} ± {se_A:.6f} Ha (Error: {abs(e_A_noisy - exact_energy)*1000:.2f} mHa)")
+print(f"Processor B Noisy Energy: {e_B_noisy:.6f} ± {se_B:.6f} Ha (Error: {abs(e_B_noisy - exact_energy)*1000:.2f} mHa)")
 """)
 
     # Section 15
     add_md("""---
-# Section 15: A/B Comparison and Interpretation
-Summary table comparing architectural metrics, routing behavior, and noisy performance.
+# Section 15: A/B Comparison, Topology Ablation & Interpretation
+Summary table comparing architectural metrics, routing behavior, and noisy performance across both hardware targets.
 """)
 
     add_code("""import pandas as pd
 
 df_ab = pd.read_csv("results/tables/AB_comparison.csv")
+print("=== Processor A vs Processor B Benchmark Comparison ===")
 display(df_ab)
+
+df_ablation = pd.read_csv("results/tables/topology_ablation.csv")
+print("")
+print("=== Architectural Ablation Across Candidate Topologies ===")
+display(df_ablation)
 """)
 
     # Section 16
@@ -298,11 +314,25 @@ Generated publication-quality figures saved in `results/figures/`:
 - `pes_curve.png`: $H_2$ potential energy dissociation curve.
 """)
 
-    add_code("""from IPython.display import Image, display
+    add_code("""import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 
-display(Image(filename="results/figures/vqe_convergence.png"))
-display(Image(filename="results/figures/architecture_tradeoffs.png"))
-display(Image(filename="results/figures/noise_energy_comparison.png"))
+fig, axes = plt.subplots(1, 3, figsize=(18, 5), dpi=150)
+axes[0].imshow(mpimg.imread("results/figures/vqe_convergence.png"))
+axes[0].set_title("VQE Energy Convergence", fontsize=12, fontweight="bold")
+axes[0].axis("off")
+
+axes[1].imshow(mpimg.imread("results/figures/architecture_tradeoffs.png"))
+axes[1].set_title("Resource Overhead (A vs B)", fontsize=12, fontweight="bold")
+axes[1].axis("off")
+
+axes[2].imshow(mpimg.imread("results/figures/noise_energy_comparison.png"))
+axes[2].set_title("Noisy Ground State Energy", fontsize=12, fontweight="bold")
+axes[2].axis("off")
+
+plt.tight_layout()
+plt.show()
+print("All benchmark visualizations loaded successfully from results/figures/!")
 """)
 
     # Section 19
