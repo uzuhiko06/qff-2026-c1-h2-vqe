@@ -250,13 +250,15 @@ We benchmark multiple ansatz topologies across Processor A and B under `optimiza
 
     add_code("""from src.routing import benchmark_multi_ansatz_compilation
 import pandas as pd
+import numpy as np
 
+rng = np.random.default_rng(42)
 bound_givens = ansatz_givens.assign_parameters(vqe_ideal["optimal_params"])
-bound_hea_r1 = ansatz_hea_r1.assign_parameters(np.zeros(ansatz_hea_r1.num_parameters))
-bound_hea_r2 = build_hardware_efficient_ansatz(4, reps=2, entanglement="circular")[0].assign_parameters(np.zeros(24))
+bound_hea_r1 = ansatz_hea_r1.assign_parameters(rng.uniform(0.1, 0.5, size=ansatz_hea_r1.num_parameters))
+bound_hea_r2 = ansatz_hea_r2.assign_parameters(rng.uniform(0.1, 0.5, size=ansatz_hea_r2.num_parameters))
 
 ansatz_suite = {
-    "Givens (Linear, 3 CX)": bound_givens,
+    "UCCSD Givens (Linear, 3 CX)": bound_givens,
     "HEA Rep 1 (Circular, 4 CX)": bound_hea_r1,
     "HEA Rep 2 (Circular, 8 CX)": bound_hea_r2
 }
@@ -308,23 +310,36 @@ e_A_ro, se_A_ro = evaluate_shot_based_energy(
     apply_readout_mitigation=True, readout_error_rate=0.01
 )
 
-# Stage 2: Zero-Noise Extrapolation (ZNE)
-zne_res = execute_zero_noise_extrapolation(
+# Stage 2: Zero-Noise Extrapolation (ZNE) on Processor A & B
+zne_res_A = execute_zero_noise_extrapolation(
     compiled_qc=comp_A_opt1,
     hamiltonian=H_4q,
     noise_model=noise_A,
     scale_factors=[1, 3, 5],
     shots=shots,
-    apply_readout_mitigation=True
+    apply_readout_mitigation=True,
+    seed_simulator=42
 )
+e_zne_A = zne_res_A["zne_mitigated_energy"]
+err_zne_A = abs(e_zne_A - exact_energy)
 
-e_zne = zne_res["zne_mitigated_energy"]
-err_zne = abs(e_zne - exact_energy)
+zne_res_B = execute_zero_noise_extrapolation(
+    compiled_qc=comp_B_opt1,
+    hamiltonian=H_4q,
+    noise_model=noise_B,
+    scale_factors=[1, 3, 5],
+    shots=shots,
+    apply_readout_mitigation=True,
+    seed_simulator=42
+)
+e_zne_B = zne_res_B["zne_mitigated_energy"]
+err_zne_B = abs(e_zne_B - exact_energy)
 
-print(f"Raw Noisy Energy:         {e_A_noisy:.6f} Ha (Error: {abs(e_A_noisy - exact_energy)*1000:.2f} mHa)")
-print(f"Readout Mitigated Energy: {e_A_ro:.6f} Ha (Error: {abs(e_A_ro - exact_energy)*1000:.2f} mHa)")
-print(f"Full ZNE Mitigated Energy:{e_zne:.6f} Ha (Error: {err_zne*1000:.2f} mHa)")
-print(f"Chemical Accuracy Restored Under Noise? {'YES (SUCCESS)' if err_zne <= 0.001594 else 'NO'}")
+print(f"Raw Noisy Energy (Proc A):         {e_A_noisy:.6f} Ha (Error: {abs(e_A_noisy - exact_energy)*1000:.2f} mHa)")
+print(f"Readout Mitigated Energy (Proc A): {e_A_ro:.6f} Ha (Error: {abs(e_A_ro - exact_energy)*1000:.2f} mHa)")
+print(f"ZNE Mitigated Energy (Proc A):     {e_zne_A:.6f} Ha (Error: {err_zne_A*1000:.2f} mHa)")
+print(f"ZNE Mitigated Energy (Proc B):     {e_zne_B:.6f} Ha (Error: {err_zne_B*1000:.2f} mHa)")
+print(f"Chemical Accuracy Achieved under noise? {'YES' if err_zne_A <= 0.001594 else 'NO'}")
 """)
 
     # Section 16
