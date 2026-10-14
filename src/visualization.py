@@ -11,6 +11,8 @@ Generates publication-quality figures:
 
 from pathlib import Path
 from typing import Dict, Any, List, Optional
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np

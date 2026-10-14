@@ -7,4 +7,5 @@ pandas==3.0.6
 scipy==1.18.1
 numpy==2.5.4
 sympy==1.14.0
-jupyter>=1.0.0
+nbconvert==7.17.2
+ipykernel==7.4.0

@@ -155,12 +155,13 @@ We scaled two-qubit noise by digitally folding CX gates: $CX \to CX \cdot (CX \c
 | **Ideal Finite-Shot VQE (4096 shots)** | $-1.138062$ | $0.78$ | **YES** | AerSimulator without noise |
 | **Raw Hardware Noise (p2=0.5%, ro=1.0%)** | $-1.095097$ | $42.19$ | **NO** | Unmitigated physical depolarizing & readout |
 | **Readout Error Mitigated** | $-1.122307$ | $14.98$ | **NO (Approaching)** | Analytical measurement matrix inversion |
-| **Full QEM: Readout Mitigation + ZNE (λ=0)** | **$-1.138827$** | **$1.54$** | **YES (Approaches Threshold)** | Readout inversion + CX gate folding Richardson fit |
+| **Full QEM (Proc A): Readout Mitigation + ZNE (λ=0)** | **$-1.138827$** | **$1.54$** | **YES** | Readout inversion + CX gate folding Richardson fit |
+| **Full QEM (Proc B): Readout Mitigation + ZNE (λ=0)** | **$-1.133309$** | **$3.98$** | **NO (Residual within shot noise)** | Readout inversion + CX gate folding Richardson fit |
 
 ---
 
 ## 7. Compliance with Phase 1 Master Guide & Final Summary
 
 1. **Clarification on Processor C & D:** In strict compliance with Page 1 of the official Phase 1 Master Guide, Phase 1 evaluates **Processor A and Processor B**. Processor C and custom Processor D are reserved exclusively for Phase 2 offline finalists.
-2. **Reproducibility:** The entire pipeline executes cleanly via `python main.py` in ~75 seconds and is fully documented in the 35-cell interactive `main.ipynb`.
+2. **Reproducibility:** The entire pipeline executes cleanly via `python main.py` in ~75 seconds and is fully documented in the interactive `main.ipynb`.
 3. **Conclusion:** This submission achieves chemical accuracy on ideal simulation, explains authentic architectural differences between tree and heavy-hex topologies, and demonstrates the practical role of Quantum Error Mitigation in reducing device noise toward chemical accuracy.

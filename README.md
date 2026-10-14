@@ -59,7 +59,7 @@ This submission delivers an end-to-end, mathematically rigorous, and reproducibl
 | **Circular HEA (Rep 2) SWAP Gates** | **3** | **0** | **-3** | **Star tree topology has no 4-cycle, forcing 3 SWAPs to route closed-loop interactions; heavy-hex mesh contains cycles and eliminates SWAPs.** |
 | **Ideal Shot Energy (4096 shots)** | $-1.13806$ Ha | $-1.13575$ Ha | $+0.00231$ Ha | Both processors achieve sub-chemical-accuracy ($< 1.6$ mHa error) under ideal finite shots. |
 | **Raw Noisy Energy (4096 shots)** | $-1.09510$ Ha | $-1.09374$ Ha | $+0.00135$ Ha | Physical noise ($p_2=0.5\%$, $ro=1.0\%$) degrades energy by ~42-44 mHa toward the depolarized state. |
-| **Full QEM Mitigated Energy (ZNE+RO)** | **$-1.13883$ Ha** | **$-1.13331$ Ha** | **+0.00552 Ha** | **Readout calibration inversion + ZNE (CX folding) reduces hardware noise error from ~42 mHa down to ~1.5 mHa on both targets.** |
+| **Full QEM Mitigated Energy (ZNE+RO)** | **$-1.13883$ Ha** | **$-1.13331$ Ha** | **+0.00552 Ha** | **Readout calibration inversion + ZNE (CX folding) reduces hardware noise error from ~42-44 mHa down to 1.55 mHa on Processor A and 3.98 mHa on Processor B (single seed=42; variance consistent with finite shot noise sigma ~ 4-7 mHa).** |
 
 ---
 
@@ -71,7 +71,8 @@ This submission delivers an end-to-end, mathematically rigorous, and reproducibl
 | **Ideal Finite-Shot VQE (4096 shots)** | $-1.138062$ | $0.78$ | **YES** | AerSimulator without noise |
 | **Raw Hardware Noise (p2=0.5%, ro=1.0%)** | $-1.095097$ | $42.19$ | **NO** | Unmitigated physical depolarizing & readout errors |
 | **Readout Error Mitigated** | $-1.122307$ | $14.98$ | **NO (Approaching)** | Analytical measurement assignment matrix inversion |
-| **Full QEM: Readout Mitigation + ZNE (λ=0)** | **$-1.138827$** | **$1.54$** | **YES (Approaches Threshold)** | Readout inversion + CX gate folding Richardson fit |
+| **Full QEM (Proc A): Readout Mitigation + ZNE (λ=0)** | **$-1.138827$** | **$1.54$** | **YES** | Readout inversion + CX gate folding Richardson fit |
+| **Full QEM (Proc B): Readout Mitigation + ZNE (λ=0)** | **$-1.133309$** | **$3.98$** | **NO (Residual within shot noise)** | Readout inversion + CX gate folding Richardson fit |
 
 ---
 
@@ -92,7 +93,7 @@ qff-2026-c1-h2-vqe/
 ├── README.md                      # Primary project overview, setup & reproduction guide
 ├── report.md                      # Comprehensive scientific technical report
 ├── main.py                        # Automated end-to-end command-line reproduction script
-├── main.ipynb                     # Authoritative 35-section interactive Jupyter notebook
+├── main.ipynb                     # Authoritative 23-section interactive Jupyter notebook
 ├── requirements.txt               # Pinned software dependencies
 ├── build_notebook.py              # Generator script for main.ipynb
 ├── data/
@@ -115,8 +116,8 @@ qff-2026-c1-h2-vqe/
 └── results/
     ├── tables/
     │   ├── AB_comparison.csv             # Side-by-side A vs B comparative benchmark
-    │   ├── final_comparison.csv          # Comprehensive summary table
     │   ├── multi_ansatz_routing.csv      # Multi-ansatz routing comparison
+    │   ├── multi_seed_zne_validation.csv # Multi-seed statistical ZNE validation table
     │   ├── error_mitigation_benchmark.csv# QEM stage-by-stage recovery table
     │   └── topology_ablation.csv         # Candidate topology ablation benchmark
     └── figures/

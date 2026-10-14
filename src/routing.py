@@ -157,7 +157,7 @@ def run_topology_ablation(logical_circuit: QuantumCircuit) -> list:
             "num_qubits": 5,
             "coupling_map": [[0, 1], [1, 0], [1, 2], [2, 1], [1, 3], [3, 1], [3, 4], [4, 3]],
             "basis_gates": ["rz", "sx", "x", "cx"],
-            "class": "Designed 5Q"
+            "class": "Target Reference 5Q"
         },
         {
             "name": "9Q 3x3 Grid Mesh",
@@ -183,7 +183,7 @@ def run_topology_ablation(logical_circuit: QuantumCircuit) -> list:
                 [6, 7], [7, 6], [6, 8], [8, 6], [8, 0], [0, 8]
             ],
             "basis_gates": ["rz", "sx", "x", "cx"],
-            "class": "Designed 9Q"
+            "class": "Target Reference 9Q"
         }
     ]
 
