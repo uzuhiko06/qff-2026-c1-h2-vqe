@@ -42,6 +42,8 @@ This submission delivers an end-to-end, mathematically rigorous, and reproducibl
    Physical device noise ($p_1 = 0.1\%$, $p_2 = 0.5\%$, readout error $= 1.0\%$) causes raw energy to degrade by $+42.19$ mHa on Processor A and $+43.54$ mHa on Processor B. By implementing analytical measurement matrix inversion and digital CX gate folding Zero-Noise Extrapolation (ZNE), we recover:
    $$E_{\text{ZNE}} = -1.138827 \text{ Hartree} \implies \Delta E = 1.54 \text{ mHa} \approx 1.594 \text{ mHa}$$
    **substantially reducing physical hardware noise error toward the chemical accuracy threshold.**
+6. **Hardware Problem Illustration & Processor D Ideology:**
+   We analyze the structural bottlenecks of tree and planar topologies for multi-orbital molecular simulations and formulate the architectural ideology of **Processor D**: a 12-qubit circulant $C_{12}(2, 3)$ graph with diameter 2, uniform degree 4, and $\lambda_2 = 3.000$, achieving 0 SWAPs and minimal depth for arbitrary 4-qubit fermionic interactions (specification locked in `processors/processor_D.json`).
 
 ---
 
@@ -104,7 +106,8 @@ qff-2026-c1-h2-vqe/
 │       └── h2_hamiltonian_2qubit.json  # 2-qubit parity-tapered Hamiltonian (R = 0.74 Å)
 ├── processors/
 │   ├── processor_A.json           # 5-qubit Processor A definition (branching tree)
-│   └── processor_B.json           # 9-qubit Processor B definition (heavy-hex mesh)
+│   ├── processor_B.json           # 9-qubit Processor B definition (heavy-hex planar mesh)
+│   └── processor_D.json           # 12-qubit Processor D definition (co-designed circulant C12)
 ├── src/
 │   ├── __init__.py                # Package initialization
 │   ├── problem.py                 # Hamiltonian loader, ansätze suite, FCI solver

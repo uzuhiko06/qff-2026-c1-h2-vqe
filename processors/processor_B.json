@@ -29,8 +29,8 @@
     [6, 8],
     [8, 0]
   ],
-  "basis_gates": ["rz", "sx", "x", "cx"],
-  "topology_type": "heavy_hex_inspired",
+  "topology_type": "heavy_hex_inspired_planar_mesh",
+  "description": "9-qubit planar mesh with heavy-hex inspiration as defined in the official Phase 1 challenge kit.",
   "noise": {
     "type": "challenge_defined",
     "single_qubit_depolarizing_rate": 0.001,

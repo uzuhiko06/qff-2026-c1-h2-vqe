@@ -3,5 +3,5 @@ Exact Classical FCI Benchmark,-1.137284838819927,0.0,YES,NumPy exact diagonaliza
 Ideal Finite-Shot VQE (4096 shots),-1.1380622294921876,0.78,YES,AerSimulator without noise
 "Raw Hardware Noise (p2=0.5%, ro=1.0%)",-1.0950966240234374,42.19,NO,Unmitigated physical depolarizing & readout errors
 Readout Error Mitigated,-1.122307443492001,14.98,NO (Approaching),Analytical measurement assignment matrix inversion
-"Full QEM (Proc A): Readout Mitigation + ZNE (lambda=0)",-1.1388268238342645,1.54,YES,Readout inversion + digital CX gate folding Richardson fit
-"Full QEM (Proc B): Readout Mitigation + ZNE (lambda=0)",-1.1333093733619164,3.98,NO (Residual 3.98 mHa within shot noise margin),Readout inversion + digital CX gate folding Richardson fit
+Full QEM (Proc A): Readout Mitigation + ZNE (lambda=0),-1.1388268238342645,1.54,YES,Readout inversion + digital CX gate folding Richardson fit
+Full QEM (Proc B): Readout Mitigation + ZNE (lambda=0),-1.1333093733619164,3.98,NO (Residual 3.98 mHa within shot noise margin),Readout inversion + digital CX gate folding Richardson fit
