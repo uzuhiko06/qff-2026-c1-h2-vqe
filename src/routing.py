@@ -132,10 +132,11 @@ def compare_transpilation_levels(
     return results
 
 
-def run_topology_ablation(logical_circuit: QuantumCircuit) -> list:
+def run_topology_ablation(circuits: Any) -> list:
     """
     Evaluates candidate topologies for 5-qubit and 9-qubit architectures
     to demonstrate algorithm-architecture co-design rationale.
+    Supports either a single QuantumCircuit or a Dict[str, QuantumCircuit].
     """
     candidates = [
         {
@@ -187,16 +188,20 @@ def run_topology_ablation(logical_circuit: QuantumCircuit) -> list:
         }
     ]
 
+    circuit_dict = circuits if isinstance(circuits, dict) else {"Circuit": circuits}
     records = []
-    for cand in candidates:
-        for opt in [0, 1]:
-            _, m = compile_for_processor(logical_circuit, cand, optimization_level=opt)
-            records.append({
-                "Topology": cand["name"],
-                "Class": cand["class"],
-                "Opt_Level": opt,
-                "Depth": m["depth"],
-                "CX_Count": m["two_qubit_gates"],
-                "Inferred_SWAPs": m["inferred_swaps"]
-            })
+    for ansatz_name, qc in circuit_dict.items():
+        for cand in candidates:
+            for opt in [0, 1]:
+                _, m = compile_for_processor(qc, cand, optimization_level=opt)
+                rec = {
+                    "Ansatz": ansatz_name,
+                    "Topology": cand["name"],
+                    "Class": cand["class"],
+                    "Opt_Level": opt,
+                    "Depth": m["depth"],
+                    "CX_Count": m["two_qubit_gates"],
+                    "Inferred_SWAPs": m["inferred_swaps"]
+                }
+                records.append(rec)
     return records

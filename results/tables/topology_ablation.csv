@@ -1,11 +1,21 @@
-Topology,Class,Opt_Level,Depth,CX_Count,Inferred_SWAPs
-5Q Linear Chain,Baseline 5Q,0,12,9,2
-5Q Linear Chain,Baseline 5Q,1,6,3,0
-5Q Ring,Baseline 5Q,0,12,9,2
-5Q Ring,Baseline 5Q,1,6,3,0
-5Q Star Tree (Processor A),Target Reference 5Q,0,15,9,2
-5Q Star Tree (Processor A),Target Reference 5Q,1,6,3,0
-9Q 3x3 Grid Mesh,Alternative 9Q,0,12,6,1
-9Q 3x3 Grid Mesh,Alternative 9Q,1,6,3,0
-9Q Heavy-Hex (Processor B),Target Reference 9Q,0,12,9,2
-9Q Heavy-Hex (Processor B),Target Reference 9Q,1,6,3,0
+Ansatz,Topology,Class,Opt_Level,Depth,CX_Count,Inferred_SWAPs
+"UCCSD Givens (Linear, 3 CX)",5Q Linear Chain,Baseline 5Q,0,12,9,2
+"UCCSD Givens (Linear, 3 CX)",5Q Linear Chain,Baseline 5Q,1,6,3,0
+"UCCSD Givens (Linear, 3 CX)",5Q Ring,Baseline 5Q,0,12,9,2
+"UCCSD Givens (Linear, 3 CX)",5Q Ring,Baseline 5Q,1,6,3,0
+"UCCSD Givens (Linear, 3 CX)",5Q Star Tree (Processor A),Target Reference 5Q,0,15,9,2
+"UCCSD Givens (Linear, 3 CX)",5Q Star Tree (Processor A),Target Reference 5Q,1,6,3,0
+"UCCSD Givens (Linear, 3 CX)",9Q 3x3 Grid Mesh,Alternative 9Q,0,12,6,1
+"UCCSD Givens (Linear, 3 CX)",9Q 3x3 Grid Mesh,Alternative 9Q,1,6,3,0
+"UCCSD Givens (Linear, 3 CX)",9Q Heavy-Hex (Processor B),Target Reference 9Q,0,12,9,2
+"UCCSD Givens (Linear, 3 CX)",9Q Heavy-Hex (Processor B),Target Reference 9Q,1,6,3,0
+Circular HEA Rep 2 (8 CX),5Q Linear Chain,Baseline 5Q,0,50,23,5
+Circular HEA Rep 2 (8 CX),5Q Linear Chain,Baseline 5Q,1,38,24,5
+Circular HEA Rep 2 (8 CX),5Q Ring,Baseline 5Q,0,32,14,2
+Circular HEA Rep 2 (8 CX),5Q Ring,Baseline 5Q,1,26,14,2
+Circular HEA Rep 2 (8 CX),5Q Star Tree (Processor A),Target Reference 5Q,0,50,20,4
+Circular HEA Rep 2 (8 CX),5Q Star Tree (Processor A),Target Reference 5Q,1,37,17,3
+Circular HEA Rep 2 (8 CX),9Q 3x3 Grid Mesh,Alternative 9Q,0,32,14,2
+Circular HEA Rep 2 (8 CX),9Q 3x3 Grid Mesh,Alternative 9Q,1,20,8,0
+Circular HEA Rep 2 (8 CX),9Q Heavy-Hex (Processor B),Target Reference 9Q,0,50,23,5
+Circular HEA Rep 2 (8 CX),9Q Heavy-Hex (Processor B),Target Reference 9Q,1,20,8,0

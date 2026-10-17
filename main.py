@@ -200,9 +200,13 @@ def run_pipeline():
     compiled_A_opt1, m_A_opt1 = compile_for_processor(bound_vqe_qc, cfg_A, optimization_level=1)
     compiled_B_opt1, m_B_opt1 = compile_for_processor(bound_vqe_qc, cfg_B, optimization_level=1)
 
-    # Candidate topology ablation
+    # Candidate topology ablation across linear and cyclic ansatz classes
     print("\n[Step 6] Running Candidate Topology Ablation Benchmark...")
-    ablation_records = run_topology_ablation(bound_vqe_qc)
+    ablation_circuits = {
+        "UCCSD Givens (Linear, 3 CX)": bound_vqe_qc,
+        "Circular HEA Rep 2 (8 CX)": ansatz_hea_r2.assign_parameters(params_hea_r2)
+    }
+    ablation_records = run_topology_ablation(ablation_circuits)
     df_ablation = pd.DataFrame(ablation_records)
     df_ablation.to_csv(res_tables_dir / "topology_ablation.csv", index=False)
 
@@ -423,21 +427,21 @@ def run_pipeline():
             "Processor A (5Q Star Tree)": f"{energy_A_ideal:.5f} Ha",
             "Processor B (9Q Heavy-Hex)": f"{energy_B_ideal:.5f} Ha",
             "Difference (B - A)": f"{energy_B_ideal - energy_A_ideal:+.5f} Ha",
-            "Architectural Rationale": "Both processors achieve sub-chemical-accuracy (< 1.6 mHa error) under ideal finite shots."
+            "Architectural Rationale": "The Givens ansatz compiles to identical depth (6) and 0 SWAPs on both chips; energy variations in finite-shot simulation are governed by statistical shot sampling variance (sigma_E ~ 2.0 mHa), not architecture."
         },
         {
             "Metric": "Raw Noisy Energy (4096 shots)",
             "Processor A (5Q Star Tree)": f"{energy_A_noisy:.5f} Ha",
             "Processor B (9Q Heavy-Hex)": f"{energy_B_noisy:.5f} Ha",
             "Difference (B - A)": f"{energy_B_noisy - energy_A_noisy:+.5f} Ha",
-            "Architectural Rationale": "Physical noise (p2=0.5%, ro=1.0%) degrades energy by ~42-44 mHa toward the depolarized state."
+            "Architectural Rationale": f"Physical noise (p1=0.1%, p2=0.5%, ro=1.0%) degrades raw energy by ~{err_A_noisy*1000:.1f} mHa on A and ~{err_B_noisy*1000:.1f} mHa on B towards the depolarized mixed state."
         },
         {
             "Metric": "Full QEM Mitigated Energy (ZNE+RO)",
             "Processor A (5Q Star Tree)": f"{energy_A_zne:.5f} Ha",
             "Processor B (9Q Heavy-Hex)": f"{energy_B_zne:.5f} Ha",
             "Difference (B - A)": f"{energy_B_zne - energy_A_zne:+.5f} Ha",
-            "Architectural Rationale": "Readout calibration inversion + ZNE (CX folding) reduces hardware noise error from ~42-44 mHa down to 1.55 mHa on Processor A and 3.98 mHa on Processor B (single seed=42; variance consistent with finite shot noise sigma ~ 4-7 mHa)."
+            "Architectural Rationale": f"Readout calibration inversion + ZNE (CX folding) on seed 42 reduces error to {err_A_zne*1000:.2f} mHa on A and {err_B_zne*1000:.2f} mHa on B. Across 10 seeds, mean error is {mean_A_mha:.2f} ± {std_A_mha:.2f} mHa (A) vs {mean_B_mha:.2f} ± {std_B_mha:.2f} mHa (B), demonstrating consistent mitigation within shot noise margins."
         }
     ])
     df_compare.to_csv(res_tables_dir / "AB_comparison.csv", index=False, encoding="utf-8")

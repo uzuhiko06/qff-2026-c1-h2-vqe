@@ -46,23 +46,35 @@ def invert_readout_probabilities(
     m_inv_10 = -p / denom
     m_inv_11 = (1.0 - p) / denom
     
-    # Identify unique bitstrings in the sample
-    raw_prob = {k: v / total_shots for k, v in raw_counts.items()}
-    mitigated_prob: Dict[str, float] = {}
-    
     # For small registers (<= 9 qubits), compute exact vector inversion over active measured qubits
     if active_physical_indices is None:
         first_key = next(iter(raw_counts))
         active_physical_indices = list(range(len(first_key)))
         
     k_len = len(active_physical_indices)
-    
-    # For Pauli expectation values, single-qubit inversion applies multiplicatively to parity:
-    # E_mit[Z] = E_raw[Z] / (1 - 2p) for each measured Pauli Z qubit!
-    # Here we also return the corrected bitstring distribution
-    for measured_str, p_raw in raw_prob.items():
-        # Project through inverse calibration
-        mitigated_prob[measured_str] = p_raw
+    raw_prob = {k: v / total_shots for k, v in raw_counts.items()}
+    mitigated_prob: Dict[str, float] = {}
+
+    # Exact analytical inversion via tensor product of single-qubit 2x2 inverse assignment matrices
+    # M_inv_1q = [[(1-p)/(1-2p), -p/(1-2p)], [-p/(1-2p), (1-p)/(1-2p)]]
+    for target_str in raw_counts.keys():
+        p_target = 0.0
+        target_bits = [int(target_str[-(p_phys + 1)]) for p_phys in active_physical_indices]
+        for src_str, p_src in raw_prob.items():
+            src_bits = [int(src_str[-(p_phys + 1)]) for p_phys in active_physical_indices]
+            weight_factor = 1.0
+            for tb, sb in zip(target_bits, src_bits):
+                if tb == sb:
+                    weight_factor *= (1.0 - p) / denom
+                else:
+                    weight_factor *= (-p) / denom
+            p_target += p_src * weight_factor
+        mitigated_prob[target_str] = max(0.0, p_target)
+
+    # Re-normalize physically valid probabilities
+    total_mit = sum(mitigated_prob.values())
+    if total_mit > 0:
+        mitigated_prob = {k: v / total_mit for k, v in mitigated_prob.items()}
         
     return mitigated_prob
 
