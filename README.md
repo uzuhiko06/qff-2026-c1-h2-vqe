@@ -68,7 +68,7 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 ### 1. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
 | Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 69–82 | 1 | 9 | **PASS** |
+| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60–82 | 1 | 9 | **PASS** |
 | 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ | 451 | 1 | 9 | **PASS** |
 | 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83–131 | 2 | 14 | **PASS** |
 | 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ | 451 | 2 | 14 | **PASS** |
@@ -94,7 +94,7 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 |---|:---:|:---:|:---:|:---:|
 | Raw Noisy on Processor D | 1 | $-1.105855$ | $+31.451$ | Unmitigated Baseline |
 | Readout Error Mitigated (REM) | 1 | $-1.122279$ | $+15.027$ | Error Halved ($>50\%$ drop) |
-| REM + Unitary Fold ($\lambda=3$) | 3 | $-1.106687$ | $+30.620$ | Scaled Gate Noise |
+| REM + Unitary Fold ($\lambda=3$) | 3 | $-1.106687$ | $+30.619$ | Scaled Gate Noise |
 | REM + Unitary Fold ($\lambda=5$) | 5 | $-1.092982$ | $+44.324$ | Scaled Gate Noise |
 | **ZNE Richardson Extrapolation** | 0 | $-1.130075$ | **$+7.231$** | **$4.35\times$ Noise Reduction** |
 | **Symmetry-Preserving Givens (Ideal)** | 0 | **$-1.137306$** | **$+0.000$** | **Exact FCI in 22 calls** |
@@ -199,8 +199,6 @@ or execute headlessly via nbconvert:
 jupyter nbconvert --to notebook --execute main.ipynb --inplace
 ```
 All cells run cleanly top-to-bottom and display all tables and figures inline.
-
----
 
 ## 🤖 AI Tool Usage Disclosure
 

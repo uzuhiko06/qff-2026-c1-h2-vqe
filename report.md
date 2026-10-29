@@ -19,7 +19,7 @@
 
 We present a comprehensive, hardware-software co-designed variational quantum eigensolver (VQE) workflow for determining the ground-state electronic energy of molecular hydrogen ($H_2$) at equilibrium bond length ($R = 0.735\text{ \AA}$) under rigorous physical noise constraints. Using the minimal STO-3G basis, we investigate five fundamental operational axes: fermion-to-qubit mapping representations, ansatz circuit depth, classical optimization algorithms, measurement shot allocation, and processor coupling topology. 
 
-We co-design **Processor D**, a 6-qubit chordal ring architecture featuring an all-to-all $K_4$ computational core and a diagnostic extension (diameter 3, maximum degree 4) that completely eliminates routing SWAP overhead ($cx\_overhead = 0$) for $H_2$ molecular simulation. On Processor D, we verify Bell-state entanglement ($|\Phi^+\rangle$), observing a baseline fidelity of $F = 0.9633 \pm 0.0021$ on directly coupled qubits and $F = 0.9471 \pm 0.0025$ across the maximum graph diameter. We derive a two-qubit Parity Hamiltonian using particle-number parity symmetry ($N_\alpha = 1, N_\beta = 1$) that slashes Pauli terms from 14 to 4 and qubit-wise commuting (QWC) measurement groups from 5 to 2 with zero reduction error ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$). A 12-run depth $\times$ optimizer sweep achieves a 100% success rate reaching chemical accuracy ($\le 1.6\text{ mHa}$), with COBYLA converging to the exact Full Configuration Interaction (FCI) energy ($-1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$) in 69–131 evaluations. 
+We co-design **Processor D**, a 6-qubit chordal ring architecture featuring an all-to-all $K_4$ computational core and a diagnostic extension (diameter 3, maximum degree 4) that completely eliminates routing SWAP overhead ($cx\_overhead = 0$) for $H_2$ molecular simulation. On Processor D, we verify Bell-state entanglement ($|\Phi^+\rangle$), observing a baseline fidelity of $F = 0.9633 \pm 0.0021$ on directly coupled qubits and $F = 0.9471 \pm 0.0025$ across the maximum graph diameter. We derive a two-qubit Parity Hamiltonian using particle-number parity symmetry ($N_\alpha = 1, N_\beta = 1$) that slashes Pauli terms from 14 to 4 and qubit-wise commuting (QWC) measurement groups from 5 to 2 with zero reduction error ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$). A 12-run depth $\times$ optimizer sweep achieves a 100% success rate reaching chemical accuracy ($\le 1.6\text{ mHa}$), with COBYLA converging to the exact Full Configuration Interaction (FCI) energy ($-1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$) in 60–131 evaluations. 
 
 We empirically confirm the Central Limit Theorem standard error scaling ($\text{SE} \propto 1/\sqrt{N_{\text{shots}}}$, shrinking by $2.75\times \approx \sqrt{8}$ between 1,024 and 8,192 shots). Under official depolarizing and readout noise, the expectation value exhibits a $+31.45\text{ mHa}$ bias toward the maximally mixed state. Through quantum error mitigation (Readout Inversion + Zero-Noise Extrapolation via digital unitary folding), we suppress noise by $4.35\times$ to $+7.23\text{ mHa}$. Finally, we introduce a single-parameter symmetry-preserving Givens ansatz that converges to exact FCI energy in only 22 evaluations.
 
@@ -213,8 +213,8 @@ This yields **12 independent optimization trajectories** executed on Processor D
 
 | Ansatz | Depth | Optimizer | Seed | Ground Energy (Ha) | Error vs $E_{\text{FCI}}$ (mHa) | Optimizer Calls | CX on D | Depth on D | Chemical Accuracy ($\le 1.6$ mHa) |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| HEA | 1 | COBYLA | 0 | $-1.13730603$ | $+0.0000$ | 81 | 1 | 9 | **PASS** |
-| HEA | 1 | COBYLA | 1 | $-1.13730604$ | $+0.0000$ | 69 | 1 | 9 | **PASS** |
+| HEA | 1 | COBYLA | 0 | $-1.13730604$ | $+0.0000$ | 60 | 1 | 9 | **PASS** |
+| HEA | 1 | COBYLA | 1 | $-1.13730603$ | $+0.0000$ | 75 | 1 | 9 | **PASS** |
 | HEA | 1 | COBYLA | 2 | $-1.13730603$ | $+0.0000$ | 82 | 1 | 9 | **PASS** |
 | HEA | 1 | SPSA | 0 | $-1.13730581$ | $+0.0002$ | 451 | 1 | 9 | **PASS** |
 | HEA | 1 | SPSA | 1 | $-1.13730488$ | $+0.0012$ | 451 | 1 | 9 | **PASS** |
@@ -230,8 +230,8 @@ This yields **12 independent optimization trajectories** executed on Processor D
 
 ### 5.3 Convergence Dynamics and Insights
 1. **100% Attainment of Chemical Accuracy:** All 12 trajectories converged inside the chemical accuracy corridor ($|\Delta E| \le 1.6\text{ mHa}$), with the worst error being $+0.0013\text{ mHa}$ (over $1200\times$ below the chemical threshold).
-2. **COBYLA vs SPSA Efficiency:** COBYLA demonstrated overwhelming speed on the noiseless statevector landscape, reaching machine precision ($\Delta E < 10^{-8}\text{ Ha}$) in **69 to 131 evaluations**. SPSA required **451 calls** (including 50 Spall calibration samples) and reliably converged to sub-micro-Hartree errors ($\le 0.0013\text{ mHa}$), demonstrating excellent stability across all random seeds.
-3. **Ansatz Expressibility:** For the 2-qubit Parity Hamiltonian, Depth 1 ($L=1$, 4 parameters, 1 CX) is already fully expressive to span the $H_2$ ground-state subspace. Depth 2 ($L=2$, 6 parameters, 2 CX) introduces redundant rotational degrees of freedom, requiring slightly more COBYLA evaluations (83–131 vs 69–82) without yielding lower energy.
+2. **COBYLA vs SPSA Efficiency:** COBYLA demonstrated overwhelming speed on the noiseless statevector landscape, reaching machine precision ($\Delta E < 10^{-8}\text{ Ha}$) in **60 to 131 evaluations**. SPSA required **451 calls** (including 50 Spall calibration samples) and reliably converged to sub-micro-Hartree errors ($\le 0.0013\text{ mHa}$), demonstrating excellent stability across all random seeds.
+3. **Ansatz Expressibility:** For the 2-qubit Parity Hamiltonian, Depth 1 ($L=1$, 4 parameters, 1 CX) is already fully expressive to span the $H_2$ ground-state subspace. Depth 2 ($L=2$, 6 parameters, 2 CX) introduces redundant rotational degrees of freedom, requiring slightly more COBYLA evaluations (83–131 vs 60–82) without yielding lower energy.
 4. **Optimal State Selection:** The global optimal state was identified at **Depth 2, COBYLA, Seed 2** ($E = -1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$), which was saved to `results/optimal_vqe_params.json` for subsequent shot-based and error mitigation benchmarks.
 
 ---
@@ -326,7 +326,7 @@ A primary deliverable of Problem Statement PS-C1 and Objective 5 is establishing
 |---|---|---|---|---|
 | **1. Hamiltonian Mapping** | Jordan-Wigner (4Q) vs Parity (2Q) vs $Z_2$ Tapering (1Q) | **Negligible** ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$ for both reductions) | **MASSIVE DECREASE** (Qubits: $4 \to 2$, Terms: $14 \to 4$, Groups: $5 \to 2$) | **MOST CHANGED QUANTUM RESOURCE COST** |
 | **2. Ansatz Depth** | HEA Depth 1 ($L=1$) vs Depth 2 ($L=2$) | **Minor** ($< 0.001\text{ mHa}$ on exact statevector) | **MODERATE INCREASE** (CX: $1 \to 2$, Parameters: $4 \to 6$, Depth: $9 \to 14$) | **Least Impact on Accuracy for $H_2$** |
-| **3. Optimizer Selection** | COBYLA vs SPSA | **Minor** (COBYLA: $0.0000\text{ mHa}$; SPSA: $0.0000$–$0.0013\text{ mHa}$) | **MAJOR INCREASE FOR SPSA** (COBYLA: 69–131 calls; SPSA: 451 calls) | **MOST CHANGED CLASSICAL RUNTIME COST** |
+| **3. Optimizer Selection** | COBYLA vs SPSA | **Minor** (COBYLA: $0.0000\text{ mHa}$; SPSA: $0.0000$–$0.0013\text{ mHa}$) | **MAJOR INCREASE FOR SPSA** (COBYLA: 60–131 calls; SPSA: 451 calls) | **MOST CHANGED CLASSICAL RUNTIME COST** |
 | **4. Measurement Shot Budget** | 1,024 vs 8,192 shots/group (Ideal & Noisy) | **MAJOR FOR IDEAL** ($-8.61\text{ mHa} \to -1.81\text{ mHa}$, entering chemical accuracy within $1\sigma$); **ZERO FOR NOISY BIAS** | **LINEAR INCREASE** ($8\times$ total shots: $2,048 \to 16,384$) | **GOVERNS STATISTICAL PRECISION ONLY** |
 | **5. Processor Topology** | Processor A (Tree) vs Processor B (Mesh) vs Processor D ($K_4$) | **CRITICAL UNDER HARDWARE NOISE** (SWAPs multiply depolarizing channels: $F = 0.963 \to 0.947$) | **MASSIVE ROUTING PENALTY ON A** (+100% CX overhead on cross-orbital gates) | **MOST CHANGED HARDWARE FIDELITY & ROUTING OVERHEAD** |
 
@@ -364,7 +364,7 @@ This ansatz restricts the variational state entirely to the two-electron singlet
 |---|:---:|:---:|:---:|:---:|
 | Unmitigated Noisy Baseline on Processor D | 1 | $-1.105855$ | $+31.451$ | False |
 | **Readout Error Mitigated (REM)** | 1 | $-1.122279$ | **$+15.027$** | False (Error Halved by $>50\%$) |
-| REM + Unitary Fold ($\lambda=3$) | 3 | $-1.106687$ | $+30.620$ | False |
+| REM + Unitary Fold ($\lambda=3$) | 3 | $-1.106687$ | $+30.619$ | False |
 | REM + Unitary Fold ($\lambda=5$) | 5 | $-1.092982$ | $+44.324$ | False |
 | **ZNE Linear Extrapolation ($\lambda \to 0$)** | 0 | $-1.129288$ | **$+8.018$** | Near ($3.92\times$ Noise Reduction) |
 | **ZNE Richardson Extrapolation ($\lambda \to 0$)** | 0 | **$-1.130075$** | **$+7.231$** | **Near ($4.35\times$ Noise Reduction)** |
@@ -375,7 +375,7 @@ This ansatz restricts the variational state entirely to the two-electron singlet
 ### 9.4 Key Insights
 * **Readout Error Domination:** Readout matrix inversion alone cuts the error from $+31.45\text{ mHa}$ down to $+15.03\text{ mHa}$ (more than a 50% drop), proving that measurement bit-flip noise is the primary source of bias on 2-qubit Parity $H_2$.
 * **Extrapolation Power:** Digital unitary folding ZNE combined with REM drives the error down to **$+7.23\text{ mHa}$** ($4.35\times$ total noise reduction).
-* **Ansatz Compactness:** The symmetry-preserving Givens ansatz requires **only 1 parameter** (vs 6 in HEA Depth 2) and converges to exact FCI energy in **only 22 optimizer calls** (vs 69–131 in HEA).
+* **Ansatz Compactness:** The symmetry-preserving Givens ansatz requires **only 1 parameter** (vs 6 in HEA Depth 2) and converges to exact FCI energy in **only 22 optimizer calls** (vs 60–131 in HEA).
 
 ---
 

@@ -116,13 +116,27 @@ def run_verification():
             report_text = f.read()
 
         df_sweep = pd.read_csv(os.path.join(tables_dir, "c1_sweep.csv"))
-        # Check that optimal energy and COBYLA call counts appear in report
-        cobyla_calls_found = ("69" in report_text or "81" in report_text) and "131" in report_text
-        spsa_err_found = "0.0002" in report_text or "0.0013" in report_text
-        if cobyla_calls_found and spsa_err_found:
-            checks.append(("Numerical Report Synchronization", True, "Report values match CSV tables and notebook outputs"))
+        # Strict validation: verify all optimizer call counts from c1_sweep.csv appear in report.md
+        unique_calls = [str(c) for c in df_sweep["optimizer_calls"].unique()]
+        missing_calls = [c for c in unique_calls if c not in report_text]
+        
+        # Verify Depth 1 COBYLA exact calls (60, 75, 82)
+        d1_cobyla_calls = [str(c) for c in df_sweep.loc[(df_sweep["depth"] == 1) & (df_sweep["optimizer"] == "COBYLA"), "optimizer_calls"]]
+        d1_calls_ok = all(c in report_text for c in d1_cobyla_calls)
+        
+        # Verify optimal energy and key errors
+        opt_energy_ok = "-1.13730604" in report_text
+        spsa_err_ok = "0.0002" in report_text and "0.0013" in report_text
+        zne_err_ok = "7.231" in report_text
+        
+        if not missing_calls and d1_calls_ok and opt_energy_ok and spsa_err_ok and zne_err_ok:
+            checks.append(("Numerical Report Synchronization", True, f"100% synchronized (Verified all calls {unique_calls} & FCI energies)"))
         else:
-            checks.append(("Numerical Report Synchronization", False, "Possible discrepancy between report and CSV tables"))
+            diff_reasons = []
+            if missing_calls: diff_reasons.append(f"Missing calls {missing_calls}")
+            if not d1_calls_ok: diff_reasons.append("D1 COBYLA calls desynchronized")
+            if not opt_energy_ok: diff_reasons.append("Optimal energy mismatch")
+            checks.append(("Numerical Report Synchronization", False, "; ".join(diff_reasons)))
     except Exception as e:
         checks.append(("Numerical Report Synchronization", False, str(e)))
 
