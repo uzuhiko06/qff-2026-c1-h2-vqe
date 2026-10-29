@@ -48,9 +48,14 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
   - Evaluated optimal state at 1,024 and 8,192 shots/group, ideal and noisy on Processor D.
   - Standard error shrinks by **$2.74\times$ (ideal)** and **$2.77\times$ (noisy)**, closely matching the theoretical CLT limit $\sqrt{8} \approx 2.8284\times$.
   - Ideal 8,192 shots spans chemical accuracy within $1\sigma$ ($-1.81 \pm 2.84\text{ mHa}$). Noisy execution experiences $+31.45\text{ mHa}$ depolarizing bias.
-- [x] **Objective 4 (Step 6): Architecture Benchmarking across Processors A, B, and D (`results/tables/resources.csv`)**
+- [x] **Objective 3 Part 4 (Step 6): Architecture Benchmarking across Processors A, B, and D (`results/tables/resources.csv`)**
   - Evaluated 5 representative circuits across Processor A (5Q tree), Processor B (9Q mesh), and Processor D (6Q co-design).
   - Demonstrates that Processor D eliminates **2 SWAP gates and 6 CX overhead (+100%)** on complete $K_4$ molecular cross-orbital circuits, while strictly obeying the degree $\le 4$ constraint.
+- [x] **Objective 4: Validation & Autonomous Reproducibility (`requirements.txt`, `main.ipynb`, `tools/verify_submission.py`)**
+  - Fully pinned environment without dependency rot; `main.ipynb` executes autonomously in 39 seconds on CPU.
+  - Automated verification test suite (`tools/verify_submission.py`) checks all 6 submission requirements with 100% PASS.
+- [x] **Objective 5: Technical Analysis & Strategic Recommendation (`report.md`)**
+  - Publication-grade report detailing which choices most changed accuracy vs cost, hardware noise physics, and limitations.
 - [x] **Bonus Experiments (Step 7): Quantum Error Mitigation & Second-Ansatz Study (`results/tables/error_mitigation_benchmark.csv`)**
   - **Readout Error Inversion (REM):** Inverts 2-qubit measurement confusion matrix, slashing noisy error from $+31.45\text{ mHa}$ to $+15.03\text{ mHa}$ (error halved).
   - **Zero-Noise Extrapolation (ZNE):** Digital unitary folding across noise scales $\lambda \in \{1, 3, 5\}$ extrapolates ground energy to **$+7.23\text{ mHa}$** ($4.35\times$ total noise reduction).

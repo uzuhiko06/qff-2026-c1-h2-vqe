@@ -21,7 +21,9 @@ def create_notebook():
                 "- **Objective 3 Part 1 (Step 3):** Hamiltonian Mapping & Exact Qubit Reduction ($4q \\to 2q$, `c1_mapping.csv`)\n",
                 "- **Objective 3 Part 2 (Step 4):** Depth $\\times$ Optimizer Sweep ($2 \\text{ depths} \\times 2 \\text{ optimizers} \\times 3 \\text{ seeds}$, `c1_sweep.csv`)\n",
                 "- **Objective 3 Part 3 (Step 5):** Finite Shot Budget & Standard Error Scaling ($1,024$ vs $8,192$ shots, `c1_shots.csv`)\n",
-                "- **Objective 4 (Step 6):** Architecture Benchmarking across Processors A, B, and D (`resources.csv`)\n",
+                "- **Objective 3 Part 4 (Step 6):** Architecture Benchmarking across Processors A, B, and D (`resources.csv`)\n",
+                "- **Objective 4:** Automated Validation & Reproducibility Suite (`tools/verify_submission.py`)\n",
+                "- **Objective 5:** Technical Report & Strategic Recommendations (`report.md`)\n",
                 "- **Bonus Experiments (Step 7):** Quantum Error Mitigation (REM + ZNE) & Symmetry-Preserving Second-Ansatz Benchmark (`error_mitigation_benchmark.csv`)"
             ]
         },
@@ -530,7 +532,7 @@ def create_notebook():
             "cell_type": "markdown",
             "metadata": {},
             "source": [
-                "### 7. Objective 4 (Step 6): Architecture Benchmarking across Processors A, B, and D\n",
+                "### 7. Objective 3 Part 4 (Step 6): Architecture Benchmarking across Processors A, B, and D\n",
                 "We benchmark 5 representative quantum chemistry circuits across Processor A (5Q tree), Processor B (9Q mesh), and Processor D (our 6Q co-design with $K_4$ chemistry core).\n",
                 "\n",
                 "**Topological Bottleneck Analysis:**\n",
