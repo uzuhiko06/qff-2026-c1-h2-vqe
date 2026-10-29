@@ -14,14 +14,14 @@
 > **Problem Statement:** **PS-C1: Molecular Ground-State Energy of $H_2$** ($R = 0.735\text{ \AA}$)  
 > **Team Name:** **STRAW HATS**  
 > **Team Members:**  
-> - **P. SAHITHI SIVA** (Team Leader) — `sahithisiva.p@vitw.edu.in`  
-> - **MD. SANA TAMREEN** (Team Member 2) — `sanatamreen.md@vitw.edu.in`  
-> - **A. SAI SARANYA** (Team Member 3) — `saisaranya.a@vitw.edu.in`  
+> - **P. SAHITHI SIVA** (Team Leader) — `monsterkingofdevils@gmail.com`  
+> - **MD. SANA TAMREEN** (Team Member 2) — `mohammadsanatamreen1807@gmail.com`  
+> - **A. SAI SARANYA** (Team Member 3) — `sri937954@gmail.com`  
 > **Institution:** Vijaya Institute of Technology for Women (VITW), Enikepadu, Vijayawada  
 
 ---
 
-## 🎯 Executive Summary & Objectives Progress
+## Executive Summary & Objectives Progress
 
 This repository contains the complete, publication-grade Phase 2 hackathon solution for **Problem Statement PS-C1**. All simulations adhere strictly to the locked challenge settings, official noise models ($p_1 = 0.001$, $p_2 = 0.005$, $p_{\text{readout}} = 0.01$), seed constants (`SEED=42`), and deliverable schemas.
 
@@ -101,7 +101,7 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 
 ---
 
-## 📂 Submission Repository Structure (Section 11 Compliant)
+## Submission Repository Structure (Section 11 Compliant)
 
 This repository strictly implements the project layout specified in Section 11 of the Official Challenge Rules:
 
@@ -157,7 +157,7 @@ This repository strictly implements the project layout specified in Section 11 o
 
 ---
 
-## ⚡ How to Reproduce All Results
+## How to Reproduce All Results
 
 All instructions run directly from the root of this cloned repository:
 
@@ -200,7 +200,7 @@ jupyter nbconvert --to notebook --execute main.ipynb --inplace
 ```
 All cells run cleanly top-to-bottom and display all tables and figures inline.
 
-## 🤖 AI Tool Usage Disclosure
+## AI Tool Usage Disclosure
 
 In compliance with Section 11 of the QFF 2026 Phase 2 Rules:
 - **AI Tool Used:** Google DeepMind's Antigravity (Advanced Agentic Coding Assistant powered by Gemini).
