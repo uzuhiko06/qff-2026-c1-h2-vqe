@@ -6,7 +6,7 @@
 ![Python](https://img.shields.io/badge/Python-3.13+-green?logo=python)
 ![FCI Accuracy](https://img.shields.io/badge/FCI%20Precision-1.33e--15%20Ha-brightgreen)
 ![Processor D](https://img.shields.io/badge/Processor%20D-Validated%20(6Q%20Chordal%20Ring)-success)
-![Phase 2](https://img.shields.io/badge/Phase%202-Complete%20(Steps%201--7%20Verified)-brightgreen)
+![Phase 2](https://img.shields.io/badge/Phase%202-Complete%20(Steps%201--8%20Validated)-brightgreen)
 
 > **Event:** Qiskit Fall Fest 2026 — Phase 2 Offline Hackathon (24 Hours)  
 > **Host Institution:** SRM University-AP  
@@ -170,8 +170,17 @@ python tools/run_bonus_study.py
 ```
 
 ### 4. Execute End-to-End Notebook
-Open and execute `main.ipynb` (runtime $< 30$ seconds):
+Open and execute `main.ipynb` (runtime $\approx 39$ seconds):
 ```bash
 jupyter notebook main.ipynb
 ```
 All cells run cleanly top-to-bottom and display all tables and figures inline.
+
+---
+
+## 🤖 AI Tool Usage Disclosure
+
+In compliance with Section 11 of the QFF 2026 Phase 2 Rules:
+- **AI Tool Used:** Google DeepMind's Antigravity (Advanced Agentic Coding Assistant powered by Gemini).
+- **Scope of Usage:** Assisted in automated code scaffolding, programmatic Jupyter notebook building (`nbclient`), automated script orchestration, LaTeX mathematical typesetting in `report.md`, and Matplotlib figure layout styling.
+- **Authorship & Responsibility:** All theoretical quantum chemical formulations (Hamiltonian reductions, particle-number parity symmetries, $\mathbb{Z}_2$ tapering), architectural co-design of Processor D ($K_4$ chordal ring), validation against official judging rules, physical decoherence analysis, and scientific conclusions were directed, thoroughly verified, and finalized by the authors (**STRAW HATS**). The team remains fully responsible for the work.
