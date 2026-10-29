@@ -1,4 +1,4 @@
 operator_label,method,qubits,pauli_terms,qwc_groups,exact_energy,cx_on_D
-JW-4q,Jordan-Wigner,4,14,5,-1.1373060358,3
-Parity-2q,parity-2q,2,4,2,-1.1373060358,1
-Tapered-1q,Z2-tapering,1,2,2,-1.1373060358,0
+JW-4q,Jordan-Wigner,4,14,5,-1.137306,3
+Parity-2q,parity-2q,2,4,2,-1.137306,1
+Tapered-1q,Z2-tapering,1,2,2,-1.137306,0
