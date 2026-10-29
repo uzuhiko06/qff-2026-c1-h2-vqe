@@ -213,8 +213,8 @@ This yields **12 independent optimization trajectories** executed on Processor D
 
 | Ansatz | Depth | Optimizer | Seed | Ground Energy (Ha) | Error vs $E_{\text{FCI}}$ (mHa) | Optimizer Calls | CX on D | Depth on D | Chemical Accuracy ($\le 1.6$ mHa) |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| HEA | 1 | COBYLA | 0 | $-1.13730604$ | $+0.0000$ | 60 | 1 | 9 | **PASS** |
-| HEA | 1 | COBYLA | 1 | $-1.13730603$ | $+0.0000$ | 75 | 1 | 9 | **PASS** |
+| HEA | 1 | COBYLA | 0 | $-1.13730603$ | $+0.0000$ | 81 | 1 | 9 | **PASS** |
+| HEA | 1 | COBYLA | 1 | $-1.13730604$ | $+0.0000$ | 69 | 1 | 9 | **PASS** |
 | HEA | 1 | COBYLA | 2 | $-1.13730603$ | $+0.0000$ | 82 | 1 | 9 | **PASS** |
 | HEA | 1 | SPSA | 0 | $-1.13730581$ | $+0.0002$ | 451 | 1 | 9 | **PASS** |
 | HEA | 1 | SPSA | 1 | $-1.13730488$ | $+0.0012$ | 451 | 1 | 9 | **PASS** |
@@ -230,8 +230,8 @@ This yields **12 independent optimization trajectories** executed on Processor D
 
 ### 5.3 Convergence Dynamics and Insights
 1. **100% Attainment of Chemical Accuracy:** All 12 trajectories converged inside the chemical accuracy corridor ($|\Delta E| \le 1.6\text{ mHa}$), with the worst error being $+0.0013\text{ mHa}$ (over $1200\times$ below the chemical threshold).
-2. **COBYLA vs SPSA Efficiency:** COBYLA demonstrated overwhelming speed on the noiseless statevector landscape, reaching machine precision ($\Delta E < 10^{-8}\text{ Ha}$) in **60 to 131 evaluations**. SPSA required **451 calls** (including 50 Spall calibration samples) and reliably converged to sub-micro-Hartree errors ($\le 0.0013\text{ mHa}$), demonstrating excellent stability across all random seeds.
-3. **Ansatz Expressibility:** For the 2-qubit Parity Hamiltonian, Depth 1 ($L=1$, 4 parameters, 1 CX) is already fully expressive to span the $H_2$ ground-state subspace. Depth 2 ($L=2$, 6 parameters, 2 CX) introduces redundant rotational degrees of freedom, requiring slightly more COBYLA evaluations (83–131 vs 60–82) without yielding lower energy.
+2. **COBYLA vs SPSA Efficiency:** COBYLA demonstrated overwhelming speed on the noiseless statevector landscape, reaching machine precision ($\Delta E < 10^{-8}\text{ Ha}$) in **69 to 131 evaluations**. SPSA required **451 calls** (including 50 Spall calibration samples) and reliably converged to sub-micro-Hartree errors ($\le 0.0013\text{ mHa}$), demonstrating excellent stability across all random seeds.
+3. **Ansatz Expressibility:** For the 2-qubit Parity Hamiltonian, Depth 1 ($L=1$, 4 parameters, 1 CX) is already fully expressive to span the $H_2$ ground-state subspace. Depth 2 ($L=2$, 6 parameters, 2 CX) introduces redundant rotational degrees of freedom, requiring slightly more COBYLA evaluations (83–131 vs 69–82) without yielding lower energy.
 4. **Optimal State Selection:** The global optimal state was identified at **Depth 2, COBYLA, Seed 2** ($E = -1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$), which was saved to `results/optimal_vqe_params.json` for subsequent shot-based and error mitigation benchmarks.
 
 ---

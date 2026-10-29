@@ -63,7 +63,7 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 ### 1. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
 | Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60–82 | 1 | 9 | **PASS** |
+| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 69–82 | 1 | 9 | **PASS** |
 | 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ | 451 | 1 | 9 | **PASS** |
 | 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83–131 | 2 | 14 | **PASS** |
 | 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ | 451 | 2 | 14 | **PASS** |
@@ -137,6 +137,7 @@ This repository strictly implements the project layout specified in Section 11 o
 │   └── results_columns.md             # Official table schema reference
 ├── tools/
 │   ├── check_processor_d.py           # Official Processor D design validator
+│   ├── verify_submission.py           # Automated all-in-one Objective 4 submission validator
 │   ├── run_bell_experiment.py         # Bell experiment automation
 │   ├── run_mapping_reduction.py       # Hamiltonian reduction script
 │   ├── run_sweep_study.py             # Depth × optimizer sweep script
@@ -160,13 +161,20 @@ All instructions run directly from the root of this cloned repository:
 pip install -r requirements.txt
 ```
 
-### 2. Validate Processor D
+### 2. Automated All-in-One Submission Verification
+Run the comprehensive validation suite to verify all file paths, Processor D constraints, table schemas, figure presence, FCI reduction loss, and numerical report consistency:
+```bash
+python tools/verify_submission.py
+# Expected output: ALL VALIDATION CHECKS PASSED: 100% COMPLIANT SUBMISSION PACKAGE!
+```
+
+### 3. Validate Processor D
 ```bash
 python tools/check_processor_d.py processors/processor_D.json 4
 # Expected output: OK - Processor D satisfies all design rules.
 ```
 
-### 3. Run Individual Experiment Scripts
+### 4. Run Individual Experiment Scripts
 ```bash
 python tools/run_bell_experiment.py
 python tools/run_mapping_reduction.py
@@ -176,7 +184,7 @@ python tools/run_resources_study.py
 python tools/run_bonus_study.py
 ```
 
-### 4. Execute End-to-End Notebook
+### 5. Execute End-to-End Notebook
 Open and execute `main.ipynb` (runtime $\approx 39$ seconds on laptop CPU):
 ```bash
 jupyter notebook main.ipynb

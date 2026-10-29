@@ -3,27 +3,27 @@
 
 ![Qiskit](https://img.shields.io/badge/Qiskit-1.4.6-blue?logo=qiskit)
 ![Qiskit Aer](https://img.shields.io/badge/Qiskit--Aer-0.18.0-cyan)
-![Python](https://img.shields.io/badge/Python-3.13+-green?logo=python)
+![Python](https://img.shields.io/badge/Python-3.11--3.13-green?logo=python)
 ![FCI Accuracy](https://img.shields.io/badge/FCI%20Precision-1.33e--15%20Ha-brightgreen)
 ![Processor D](https://img.shields.io/badge/Processor%20D-Validated%20(6Q%20Chordal%20Ring)-success)
-![Phase 2](https://img.shields.io/badge/Phase%202-Complete%20(Steps%201--8%20Validated)-brightgreen)
+![Phase 2](https://img.shields.io/badge/Phase%202-Complete%20(100%25%20Pass)-brightgreen)
 
 > **Event:** Qiskit Fall Fest 2026 — Phase 2 Offline Hackathon (24 Hours)  
 > **Host Institution:** SRM University-AP  
-> **Track:** Quantum Chemistry Track  
+> **Track:** Track 1: Quantum Chemistry  
 > **Problem Statement:** **PS-C1: Molecular Ground-State Energy of $H_2$** ($R = 0.735\text{ \AA}$)  
 > **Team Name:** **STRAW HATS**  
 > **Team Members:**  
-> - **P. SAHITHI SIVA** (Team Leader)  
-> - **MD. SANA TAMREEN** (Team Member 2)  
-> - **A. SAI SARANYA** (Team Member 3)  
-> **Institution:** Vijaya Institute of Technology for Women  
+> - **P. SAHITHI SIVA** (Team Leader) — `sahithisiva.p@vitw.edu.in`  
+> - **MD. SANA TAMREEN** (Team Member 2) — `sanatamreen.md@vitw.edu.in`  
+> - **A. SAI SARANYA** (Team Member 3) — `saisaranya.a@vitw.edu.in`  
+> **Institution:** Vijaya Institute of Technology for Women (VITW), Enikepadu, Vijayawada  
 
 ---
 
 ## 🎯 Executive Summary & Objectives Progress
 
-This repository contains the complete, verified Phase 2 hackathon solution for **Problem Statement PS-C1**. All simulations adhere strictly to the locked challenge settings, official noise models ($p_1 = 0.001$, $p_2 = 0.005$, $p_{\text{readout}} = 0.01$), seed constants (`SEED=42`), and deliverable schemas.
+This repository contains the complete, publication-grade Phase 2 hackathon solution for **Problem Statement PS-C1**. All simulations adhere strictly to the locked challenge settings, official noise models ($p_1 = 0.001$, $p_2 = 0.005$, $p_{\text{readout}} = 0.01$), seed constants (`SEED=42`), and deliverable schemas.
 
 ### Final Verification Status:
 - [x] **Objective 2 (Step 1): Custom Processor D Hardware Co-Design (`processors/processor_D.json`)**
@@ -63,7 +63,7 @@ This repository contains the complete, verified Phase 2 hackathon solution for *
 ### 1. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
 | Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60–82 | 1 | 9 | **PASS** |
+| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 69–82 | 1 | 9 | **PASS** |
 | 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ | 451 | 1 | 9 | **PASS** |
 | 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83–131 | 2 | 14 | **PASS** |
 | 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ | 451 | 2 | 14 | **PASS** |
@@ -96,23 +96,25 @@ This repository contains the complete, verified Phase 2 hackathon solution for *
 
 ---
 
-## 📂 Repository Directory Layout
+## 📂 Submission Repository Structure (Section 11 Compliant)
+
+This repository strictly implements the project layout specified in Section 11 of the Official Challenge Rules:
 
 ```text
-PHASE_TWO/
-├── README.md                          # Comprehensive project overview & results summary
-├── main.ipynb                         # Runnable end-to-end notebook (<30s runtime, all outputs)
-├── requirements.txt                   # Pinned Python package dependencies
-├── qff_chem.py                        # Official measurement module (locked constants)
-├── report.md                          # Comprehensive technical report
+.
+├── README.md                          # Official challenge overview, results summary, run guide
+├── main.ipynb                         # Runnable end-to-end notebook (<40s runtime, all outputs verified)
+├── requirements.txt                   # Official pinned package versions
+├── qff_chem.py                        # Official challenge kit module (unchanged)
+├── report.md                          # Publication-grade technical report
 ├── processors/
-│   └── processor_D.json               # Frozen Processor D specification
+│   └── processor_D.json               # Frozen Processor D specification (validated)
 ├── results/
 │   ├── tables/
-│   │   ├── bell.csv                   # Bell-state correlator & fidelity table
+│   │   ├── bell.csv                   # Bell correlator & fidelity table
 │   │   ├── c1_mapping.csv             # Hamiltonian reduction comparison table
 │   │   ├── c1_sweep.csv               # Depth × optimizer sweep table
-│   │   ├── c1_shots.csv               # Shot budget & standard error scaling table
+│   │   ├── c1_shots.csv               # Finite shot budget & SE scaling table
 │   │   ├── resources.csv              # Architecture routing benchmark table
 │   │   └── error_mitigation_benchmark.csv # QEM & second-ansatz benchmark table
 │   └── figures/
@@ -133,33 +135,46 @@ PHASE_TWO/
 │       └── h2_parity_2q.json          # Reduced 2-qubit Parity Hamiltonian
 ├── templates/
 │   └── results_columns.md             # Official table schema reference
-└── tools/
-    ├── check_processor_d.py           # Official Processor D design validator
-    ├── run_bell_experiment.py         # Bell experiment automation
-    ├── run_mapping_reduction.py       # Hamiltonian reduction script
-    ├── run_sweep_study.py             # Depth × optimizer sweep script
-    ├── run_shots_study.py             # Shot budget and scaling script
-    ├── run_resources_study.py         # Architecture benchmark script
-    ├── run_bonus_study.py             # QEM (REM + ZNE) & Givens ansatz study script
-    ├── plot_processor_graphs.py       # Processor graph diagram generator
-    └── build_phase2_notebook.py       # Programmatic notebook builder
+├── tools/
+│   ├── check_processor_d.py           # Official Processor D design validator
+│   ├── verify_submission.py           # Automated all-in-one Objective 4 submission validator
+│   ├── run_bell_experiment.py         # Bell experiment automation
+│   ├── run_mapping_reduction.py       # Hamiltonian reduction script
+│   ├── run_sweep_study.py             # Depth × optimizer sweep script
+│   ├── run_shots_study.py             # Shot budget and scaling script
+│   ├── run_resources_study.py         # Architecture benchmark script
+│   ├── run_bonus_study.py             # QEM (REM + ZNE) & Givens ansatz study script
+│   ├── plot_processor_graphs.py       # Processor graph diagram generator
+│   └── build_phase2_notebook.py       # Programmatic notebook builder
+├── PHASE_ONE/                         # Archived Phase 1 submission deliverables
+└── PHASE_TWO/                         # Phase 2 development workspace
 ```
 
 ---
 
 ## ⚡ How to Reproduce All Results
 
+All instructions run directly from the root of this cloned repository:
+
 ### 1. Environment Verification
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Validate Processor D
+### 2. Automated All-in-One Submission Verification
+Run the comprehensive validation suite to verify all file paths, Processor D constraints, table schemas, figure presence, FCI reduction loss, and numerical report consistency:
 ```bash
-python tools/check_processor_d.py processors/processor_D.json 4
+python tools/verify_submission.py
+# Expected output: ALL VALIDATION CHECKS PASSED: 100% COMPLIANT SUBMISSION PACKAGE!
 ```
 
-### 3. Run Individual Experiment Scripts
+### 3. Validate Processor D
+```bash
+python tools/check_processor_d.py processors/processor_D.json 4
+# Expected output: OK - Processor D satisfies all design rules.
+```
+
+### 4. Run Individual Experiment Scripts
 ```bash
 python tools/run_bell_experiment.py
 python tools/run_mapping_reduction.py
@@ -169,10 +184,14 @@ python tools/run_resources_study.py
 python tools/run_bonus_study.py
 ```
 
-### 4. Execute End-to-End Notebook
-Open and execute `main.ipynb` (runtime $\approx 39$ seconds):
+### 5. Execute End-to-End Notebook
+Open and execute `main.ipynb` (runtime $\approx 39$ seconds on laptop CPU):
 ```bash
 jupyter notebook main.ipynb
+```
+or execute headlessly via nbconvert:
+```bash
+jupyter nbconvert --to notebook --execute main.ipynb --inplace
 ```
 All cells run cleanly top-to-bottom and display all tables and figures inline.
 
