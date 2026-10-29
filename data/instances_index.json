@@ -1,0 +1,221 @@
+{
+ "_note": "QFF2026 Phase 2 Quantum Chemistry - LOCKED official instances. Energies in Hartree, distances in Angstrom. All operators: Jordan-Wigner, qiskit-nature block spin-orbital order (qubits 0..n-1 alpha, n..2n-1 beta). Total energy = <psi|H|psi> + meta.constant_hartree.",
+ "basis": "STO-3G (all systems), restricted Hartree-Fock orbitals, PySCF 2.14.0 / qiskit-nature 0.7.2",
+ "PS-C1": {
+  "system": "H2",
+  "R": 0.735,
+  "file": "data/c1/h2_0.735.json",
+  "integrals": "data/c1/h2_0.735_integrals.npz",
+  "required_sweep": {
+   "ansatz_depths": 2,
+   "optimizers": [
+    "COBYLA",
+    "SPSA"
+   ],
+   "initialization_seeds": [
+    0,
+    1,
+    2
+   ]
+  },
+  "shots_per_group": [
+   1024,
+   8192
+  ]
+ },
+ "PS-C2": {
+  "H2": {
+   "grid_angstrom": [
+    0.5,
+    0.6,
+    0.65,
+    0.7,
+    0.735,
+    0.8,
+    0.9,
+    1.1,
+    1.5,
+    2.0,
+    2.5,
+    3.0
+   ],
+   "files": "data/c2/h2/h2_<R with 3 decimals>.json",
+   "fit_window_angstrom": [
+    0.6,
+    0.8
+   ],
+   "reduced_mass_amu": 0.503912516,
+   "noisy_points_angstrom": [
+    0.735,
+    1.5,
+    3.0
+   ]
+  },
+  "LiH_advanced_tier": {
+   "grid_angstrom": [
+    1.0,
+    1.2,
+    1.4,
+    1.5,
+    1.595,
+    1.7,
+    1.8,
+    2.0,
+    2.5,
+    3.0,
+    3.5,
+    4.0
+   ],
+   "files": "data/c2/lih/lih_<R with 3 decimals>.json",
+   "active_space": "frozen Li 1s (MO 0); active = 3 sigma (A1) orbitals listed in meta.active_orbitals; 2 active electrons",
+   "operators": {
+    "operator_jw": "6 qubits",
+    "operator_tapered": "4 qubits, Z2-tapered in the Hartree-Fock sector (tapering_symmetries / tapering_sector given)"
+   },
+   "fit_window_angstrom": [
+    1.4,
+    1.8
+   ],
+   "reduced_mass_amu": 0.881238167,
+   "noisy_points_angstrom": [
+    1.595,
+    2.5,
+    4.0
+   ]
+  },
+  "breakdown_threshold_hartree": 0.0016
+ },
+ "PS-C3": {
+  "system": "H2O, O-H 0.9584 A, H-O-H 104.45 deg",
+  "file": "data/c3/h2o_4e4o.json",
+  "integrals": "data/c3/h2o_4e4o_integrals.npz",
+  "active_space": "(4e,4o): active MOs 3,4,5,6 (HOMO-1, HOMO, LUMO, LUMO+1); MOs 0,1,2 doubly occupied and frozen",
+  "max_qubits": 8,
+  "shots_per_group": 8192
+ },
+ "constants": {
+  "chemical_accuracy_hartree": 0.0016,
+  "hartree_to_kcal_per_mol": 627.509474,
+  "hartree_to_cm-1": 219474.6313705,
+  "amu_in_electron_masses": 1822.888486,
+  "bohr_in_angstrom": 0.529177210903
+ },
+ "benchmark_settings": {
+  "basis_gates": [
+   "rz",
+   "sx",
+   "x",
+   "cx"
+  ],
+  "optimization_level": 1,
+  "seed_transpiler": 42,
+  "seed_simulator": 42,
+  "noise": {
+   "p1_depolarizing": 0.001,
+   "p2_depolarizing": 0.005,
+   "readout_bitflip": 0.01
+  },
+  "bell_shots": 4096
+ },
+ "processors": {
+  "A": {
+   "num_qubits": 5,
+   "edges": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     3
+    ],
+    [
+     3,
+     4
+    ]
+   ]
+  },
+  "B": {
+   "num_qubits": 9,
+   "edges": [
+    [
+     0,
+     1
+    ],
+    [
+     1,
+     2
+    ],
+    [
+     1,
+     6
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     2,
+     6
+    ],
+    [
+     2,
+     5
+    ],
+    [
+     3,
+     4
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     5,
+     6
+    ],
+    [
+     6,
+     7
+    ],
+    [
+     6,
+     8
+    ],
+    [
+     8,
+     0
+    ]
+   ]
+  },
+  "D_limits": {
+   "max_qubits": 12,
+   "max_degree": 4,
+   "connected": true,
+   "basis_gates_allowed": [
+    [
+     "rz",
+     "sx",
+     "x",
+     "cx"
+    ],
+    [
+     "rz",
+     "sx",
+     "x",
+     "cz"
+    ]
+   ],
+   "error_rates_not_better_than": {
+    "p1": 0.001,
+    "p2": 0.005,
+    "p_readout": 0.01
+   },
+   "justification_min_words": 40
+  }
+ }
+}

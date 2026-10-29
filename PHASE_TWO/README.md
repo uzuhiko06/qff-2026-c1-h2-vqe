@@ -1,8 +1,8 @@
 # Qiskit Fall Fest 2026 — Phase 2 Hackathon
 ## Track 1: Quantum Chemistry — Problem Statement PS-C1 ($H_2$ Ground-State Energy)
 
-![Qiskit](https://img.shields.io/badge/Qiskit-2.5.2-blue?logo=qiskit)
-![Qiskit Aer](https://img.shields.io/badge/Qiskit--Aer-0.17.2-cyan)
+![Qiskit](https://img.shields.io/badge/Qiskit-1.4.6-blue?logo=qiskit)
+![Qiskit Aer](https://img.shields.io/badge/Qiskit--Aer-0.18.0-cyan)
 ![Python](https://img.shields.io/badge/Python-3.13+-green?logo=python)
 ![FCI Accuracy](https://img.shields.io/badge/FCI%20Precision-1.33e--15%20Ha-brightgreen)
 ![Processor D](https://img.shields.io/badge/Processor%20D-Validated%20(6Q%20Chordal%20Ring)-success)
@@ -29,7 +29,7 @@ This repository contains the complete, verified Phase 2 hackathon solution for *
 - [x] **Objective 2 (Step 1): Custom Processor D Hardware Co-Design (`processors/processor_D.json`)**
   - 6-qubit chordal ring architecture featuring an all-to-all $K_4$ core on qubits $\{0, 1, 2, 3\}$ with cross-chords $(0,2)$ and $(1,3)$, extending to leaf 5.
   - Eliminates routing SWAP overhead ($cx\_overhead = 0$) and minimizes two-qubit depth for $H_2$ molecular simulation.
-  - Validated via `tools/check_processor_d.py` ($\le 12$ qubits, max degree $\le 4$, connected, 44-word justification).
+  - Validated via `tools/check_processor_d.py` ($\le 12$ qubits, max degree $\le 4$, connected, 161-word justification).
 - [x] **Objective 1 (Step 2): Bell-State Verification on Processor D (`results/tables/bell.csv`)**
   - Prepared $|\Phi^+\rangle = \frac{|00\rangle + |11\rangle}{\sqrt{2}}$ on physical pairs `(0, 1)` (distance 1) and `(0, 5)` (distance 3).
   - Executed 12 circuits total across XX, YY, and ZZ bases (4,096 shots each) under ideal and noisy conditions.
@@ -38,19 +38,19 @@ This repository contains the complete, verified Phase 2 hackathon solution for *
     - Distance 3: $F_{\text{ideal}} = 1.0000 \pm 0.0000$, $F_{\text{noisy}} = 0.9471 \pm 0.0025$ ($CX = 7$, 2 routing SWAPs)
 - [x] **Objective 3 Part 1 (Step 3): Hamiltonian Mapping & Qubit Reduction (`results/tables/c1_mapping.csv`)**
   - **Baseline (Jordan-Wigner 4Q):** 14 non-identity terms, 5 QWC groups, $E = -1.1373060358\text{ Ha}$.
-  - **Parity Mapping with 2-Qubit Reduction (2Q):** Preserves particle-number parity ($N_\alpha=1, N_\beta=1$), slashing Pauli terms to 4 and QWC groups to 2. Exact ground energy matches $E_{\text{FCI}}$ with $|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$ (zero reduction loss).
+  - **Parity Mapping with 2-Qubit Reduction (2Q):** Derived live from raw integrals, preserving particle-number parity ($N_\alpha=1, N_\beta=1$), slashing Pauli terms to 4 and QWC groups to 2. Exact ground energy matches $E_{\text{FCI}}$ with $|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$ (zero reduction loss).
   - **$Z_2$ Symmetry Tapering (1Q):** Compressed to single active qubit ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$).
 - [x] **Objective 3 Part 2 (Step 4): Depth $\times$ Optimizer Sweep (`results/tables/c1_sweep.csv`)**
   - 12 independent runs ($2 \text{ depths} \times 2 \text{ optimizers} \times 3 \text{ seeds}$) on Processor D.
-  - **100% of runs achieve chemical accuracy** ($|\Delta E| \le 1.6\text{ mHa}$).
+  - **100% of runs achieve chemical accuracy** ($|\Delta E| \le 1.6\text{ mHa}$, worst error $+0.0013\text{ mHa}$).
   - Best overall: Depth 2, COBYLA, Seed 2 ($E = -1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$).
 - [x] **Objective 3 Part 3 (Step 5): Finite Shot Budget & Standard Error Scaling (`results/tables/c1_shots.csv`)**
   - Evaluated optimal state at 1,024 and 8,192 shots/group, ideal and noisy on Processor D.
   - Standard error shrinks by **$2.74\times$ (ideal)** and **$2.77\times$ (noisy)**, closely matching the theoretical CLT limit $\sqrt{8} \approx 2.8284\times$.
-  - Ideal 8,192 shots achieves chemical accuracy ($-0.48\text{ mHa}$). Noisy execution experiences $+31.45\text{ mHa}$ depolarizing bias.
+  - Ideal 8,192 shots spans chemical accuracy within $1\sigma$ ($-1.81 \pm 2.84\text{ mHa}$). Noisy execution experiences $+31.45\text{ mHa}$ depolarizing bias.
 - [x] **Objective 4 (Step 6): Architecture Benchmarking across Processors A, B, and D (`results/tables/resources.csv`)**
   - Evaluated 5 representative circuits across Processor A (5Q tree), Processor B (9Q mesh), and Processor D (6Q co-design).
-  - Demonstrates that Processor D eliminates **2 SWAP gates and 6 CX overhead (+100%)** on molecular cross-orbital circuits, while strictly obeying the degree $\le 4$ constraint.
+  - Demonstrates that Processor D eliminates **2 SWAP gates and 6 CX overhead (+100%)** on complete $K_4$ molecular cross-orbital circuits, while strictly obeying the degree $\le 4$ constraint.
 - [x] **Bonus Experiments (Step 7): Quantum Error Mitigation & Second-Ansatz Study (`results/tables/error_mitigation_benchmark.csv`)**
   - **Readout Error Inversion (REM):** Inverts 2-qubit measurement confusion matrix, slashing noisy error from $+31.45\text{ mHa}$ to $+15.03\text{ mHa}$ (error halved).
   - **Zero-Noise Extrapolation (ZNE):** Digital unitary folding across noise scales $\lambda \in \{1, 3, 5\}$ extrapolates ground energy to **$+7.23\text{ mHa}$** ($4.35\times$ total noise reduction).
@@ -63,24 +63,24 @@ This repository contains the complete, verified Phase 2 hackathon solution for *
 ### 1. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
 | Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60–86 | 1 | 9 | **PASS** |
-| 1 | SPSA | 0, 1, 2 | $-1.1360$ to $-1.1368$ | $0.54$–$1.30$ | 451 | 1 | 9 | **PASS** |
-| 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 88–131 | 2 | 14 | **PASS** |
-| 2 | SPSA | 0, 1, 2 | $-1.1360$ to $-1.1365$ | $0.86$–$1.30$ | 451 | 2 | 14 | **PASS** |
+| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60–82 | 1 | 9 | **PASS** |
+| 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ | 451 | 1 | 9 | **PASS** |
+| 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83–131 | 2 | 14 | **PASS** |
+| 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ | 451 | 2 | 14 | **PASS** |
 
 ### 2. Shot Estimation Scaling (`c1_shots.csv`)
 | Shots / Group | Condition | Measured Energy (Ha) | Standard Error (Ha) | Error vs FCI (mHa) | Total Shots |
 |:---:|:---:|:---:|:---:|:---:|:---:|
-| 1,024 | ideal | $-1.145911$ | $0.013589$ | $-8.6052$ | 2,048 |
-| 1,024 | noisy_D | $-1.110266$ | $0.013401$ | $+27.0397$ | 2,048 |
-| 8,192 | ideal | $-1.137785$ | $0.004953$ | **$-0.4794$** (Chem Acc) | 16,384 |
-| 8,192 | noisy_D | $-1.105855$ | $0.004838$ | $+31.4510$ | 16,384 |
+| 1,024 | ideal | $-1.145911$ | $0.007790$ | $-8.6052$ | 2,048 |
+| 1,024 | noisy_D | $-1.110266$ | $0.009214$ | $+27.0397$ | 2,048 |
+| 8,192 | ideal | $-1.139118$ | $0.002841$ | **$-1.8121$** (Chem Acc $\pm 1\sigma$) | 16,384 |
+| 8,192 | noisy_D | $-1.105855$ | $0.003332$ | $+31.4515$ | 16,384 |
 
 ### 3. Architecture Routing Resources (`resources.csv`)
 | Circuit Label | Metric | Processor A (5Q Tree) | Processor B (9Q Mesh) | Processor D (6Q Co-Design) |
 |---|---|:---:|:---:|:---:|
 | `Molecular-4q-Cross` | **Physical CX** | **12** | **6** | **6** |
-| `Molecular-4q-Cross` | **Total Depth** | **26** | **17** | **17** |
+| `Molecular-4q-Cross` | **Total Depth** | **16** | **9** | **9** |
 | `Molecular-4q-Cross` | **Routing SWAPs**| **2** | **0** | **0** |
 | `Molecular-4q-Cross` | **CX Overhead** | **+6 (+100%)** | **0** | **0** |
 

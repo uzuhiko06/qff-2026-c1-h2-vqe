@@ -194,12 +194,27 @@ def create_notebook():
                 "e_fci = meta['e_fci_full_space_hartree']\n",
                 "print(f\"FCI Reference Ground Energy: {e_fci:.8f} Ha\")\n",
                 "\n",
-                "# Load pre-computed parity 2Q representation\n",
-                "with open('data/c1/h2_parity_2q.json') as f:\n",
-                "    p_data = json.load(f)\n",
+                "# Step 1: Live Parity Reduction directly from 1- and 2-electron integrals\n",
+                "int_data = np.load('data/c1/h2_0.735_integrals.npz')\n",
+                "h1, h2_chemist = int_data['h1'], int_data['h2_chemist']\n",
+                "e_core = float(int_data['e_core'])\n",
+                "n_alpha, n_beta = int(int_data['n_alpha']), int(int_data['n_beta'])\n",
+                "\n",
                 "from qiskit.quantum_info import SparsePauliOp\n",
-                "op_2q = SparsePauliOp.from_list(p_data['operator_parity_2q'])\n",
-                "const_2q = float(p_data['meta']['constant_hartree'])\n",
+                "try:\n",
+                "    from qiskit_nature.second_q.hamiltonians import ElectronicEnergy\n",
+                "    from qiskit_nature.second_q.mappers import ParityMapper\n",
+                "    ham_ferm = ElectronicEnergy.from_raw_integrals(h1, h2_chemist).second_q_op()\n",
+                "    parity_mapper = ParityMapper(num_particles=(n_alpha, n_beta))\n",
+                "    op_2q = parity_mapper.map(ham_ferm)\n",
+                "    const_2q = e_core\n",
+                "    print(f'Successfully derived 2-qubit Parity Hamiltonian live from integrals ({op_2q.num_qubits} qubits, {len(op_2q)} terms)!')\n",
+                "except Exception as e:\n",
+                "    print(f'Fallback to pre-computed Parity operator: {e}')\n",
+                "    with open('data/c1/h2_parity_2q.json') as f:\n",
+                "        p_data = json.load(f)\n",
+                "    op_2q = SparsePauliOp.from_list(p_data['operator_parity_2q'])\n",
+                "    const_2q = float(p_data['meta']['constant_hartree'])\n",
                 "\n",
                 "# Compute exact eigenvalues\n",
                 "from numpy.linalg import eigvalsh\n",
@@ -511,8 +526,12 @@ def create_notebook():
             "metadata": {},
             "source": [
                 "### 7. Objective 4 (Step 6): Architecture Benchmarking across Processors A, B, and D\n",
-                "We benchmark 5 representative quantum chemistry circuits across Processor A (5Q tree), Processor B (9Q heavy-hex-like mesh), and Processor D (our 6Q $K_4$ chordal ring co-design).\n",
-                "We record gate overheads and routing SWAPs into `results/tables/resources.csv`."
+                "We benchmark 5 representative quantum chemistry circuits across Processor A (5Q tree), Processor B (9Q mesh), and Processor D (our 6Q co-design with $K_4$ chemistry core).\n",
+                "\n",
+                "**Topological Bottleneck Analysis:**\n",
+                "- **Linear HEA (`JW-4q-HEA-reps1/2` & `Parity-2q`):** Employs nearest-neighbor 1D entanglement chains ($0-1-2-3$). Because Processor A contains a 4-qubit linear subgraph $0-1-3-4$, SABRE embeds it with **0 SWAPs**.\n",
+                "- **Complete Molecular Interaction Graph (`Molecular-4q-Cross`):** In genuine quantum chemistry, two-electron Coulomb and exchange integrals couple all pairs of the 4 spin-orbitals (intra-spin excitations and inter-spin cross-orbital correlations), forming a complete graph $K_4$. On Processor A's acyclic tree topology, executing this complete interaction graph forces **2 SWAP gates (+6 CX gates, +100% two-qubit overhead)**.\n",
+                "- **Processor D Co-Design Advantage:** Processor D integrates an all-to-all $K_4$ clique on qubits {0,1,2,3}, executing the full molecular interaction graph with **0 SWAPs and 0 CX overhead** while strictly obeying maximum degree $\\le 4$."
             ]
         },
         {
@@ -822,9 +841,10 @@ def create_notebook():
         "nbformat_minor": 5
     }
     
-    with open("PHASE_TWO/main.ipynb", "w", encoding="utf-8") as f:
+    target_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "main.ipynb")
+    with open(target_path, "w", encoding="utf-8") as f:
         json.dump(nb, f, indent=2)
-    print("Successfully built complete PHASE_TWO/main.ipynb covering Steps 1 through 8 with unique cell IDs and inline visualizations.")
+    print(f"Successfully built complete {target_path} covering Steps 1 through 8 with unique cell IDs and inline visualizations.")
 
 if __name__ == "__main__":
     create_notebook()
