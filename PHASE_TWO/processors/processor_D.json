@@ -1,0 +1,29 @@
+{
+  "name": "Processor D",
+  "team": "STRAW HATS",
+  "problem_statement": "PS-C1",
+  "num_qubits": 6,
+  "edges": [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+    [3, 0],
+    [0, 2],
+    [1, 3],
+    [2, 4],
+    [3, 4],
+    [4, 5]
+  ],
+  "basis_gates": [
+    "rz",
+    "sx",
+    "x",
+    "cx"
+  ],
+  "error_rates": {
+    "p1": 0.001,
+    "p2": 0.005,
+    "p_readout": 0.01
+  },
+  "justification": "Benchmarking on Processor A revealed severe routing bottlenecks: its acyclic tree topology requires 2 SWAPs (+6 CX gates, 100% two-qubit overhead) to execute cross-orbital molecular entangling gates across non-adjacent spin-orbitals, elevating two-qubit depth from 5 to 12. Processor B suffers from degree-5 hub crowding on qubit 6 and a diameter of 4. Processor D resolves these bottlenecks through a 6-qubit chemistry-optimized co-design featuring an all-to-all K4 core on qubits {0,1,2,3} with cross-chords (0,2) and (1,3), eliminating all routing SWAPs (cx_overhead = 0) and minimizing circuit depth for H2 molecular simulation. Error rates are fixed to official standards (p1=0.001, p2=0.005, p_readout=0.01) to isolate architectural connectivity gains. In exchange, Processor D accepts a degree of 4 on bridge nodes 2 and 3, which increases planar control line density and microwave crosstalk risks."
+}
