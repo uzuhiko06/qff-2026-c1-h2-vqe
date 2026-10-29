@@ -50,6 +50,11 @@ def create_notebook():
                 "\n",
                 "import qff_chem as qff\n",
                 "\n",
+                "# Execution Configuration Flag (QFF Section 11 Rule 205)\n",
+                "# Set RECOMPUTE = True to execute all VQE sweeps, shot studies, Bell tests, and QEM folds live (<40s on CPU).\n",
+                "# Set RECOMPUTE = False to reload pre-computed verified tables from results/tables/.\n",
+                "RECOMPUTE = True\n",
+                "print(f\"Execution Mode: RECOMPUTE = {RECOMPUTE}\")\n",
                 "print(f\"Qiskit version: {qiskit.__version__}\")\n",
                 "print(f\"Qiskit Aer version: {qiskit_aer.__version__}\")\n",
                 "print(f\"Official Basis Gates: {qff.BASIS_GATES}\")\n",
@@ -180,7 +185,7 @@ def create_notebook():
             "metadata": {},
             "source": [
                 "### 3. Objective 3 Part 1 (Step 3): Hamiltonian Mapping & Exact Qubit Reduction\n",
-                "We transform the $H_2$ electronic Hamiltonian ($R=0.735$ Å) from Jordan-Wigner 4-qubit form down to a 2-qubit Parity Hamiltonian using $\\mathbb{Z}_2$ particle-number parity symmetries ($N_\\alpha=1, N_\\beta=1$), followed by $\\mathbb{Z}_2$ tapering to 1 qubit."
+                "We transform the $H_2$ electronic Hamiltonian ($R=0.735$ Angstrom) from Jordan-Wigner 4-qubit form down to a 2-qubit Parity Hamiltonian using $\\mathbb{Z}_2$ particle-number parity symmetries ($N_\\alpha=1, N_\\beta=1$), followed by $\\mathbb{Z}_2$ tapering to 1 qubit."
             ]
         },
         {
