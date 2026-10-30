@@ -1,4 +1,9 @@
-# Technical Report: Algorithm-Architecture Co-Design & Quantum Error Mitigation for Molecular Ground-State Energy ($H_2$)
+> [!NOTE]
+> ## ⚠️ ARCHIVED PHASE 1 TECHNICAL REPORT (NOT GRADED FOR PHASE 2)
+> **Notice to Evaluators:** This document is the historical Phase 1 technical report.
+> Per official organizer guidelines, **the Phase 2 submission report is located exclusively in the project root: `report.md`**.
+
+# Technical Report: Algorithm-Architecture Co-Design & Quantum Error Mitigation for Molecular Ground-State Energy ($H_2$) [Phase 1 Archive]
 
 **Team Name:** STRAW HATS  
 **Team Members:**  

@@ -175,8 +175,11 @@ $$F(|\Phi^+\rangle) = \frac{1 + \langle XX \rangle - \langle YY \rangle + \langl
    $$H_{\text{Parity-2q}} = -1.05237323\, II + 0.39793742\, IZ - 0.39793742\, ZI - 0.01128010\, ZZ + 0.18093119\, XX$$
    with constant $E_{\text{core}} = 0.71996900\text{ Ha}$.
 3. **$\mathbb{Z}_2$ Symmetry Tapering (1 Qubit):**  
-   The 4-qubit JW Hamiltonian possesses three independent reflection symmetries commuting with $H$: $\tau_1 = Z_0 Z_3$, $\tau_2 = Z_1 Z_3$, $\tau_3 = Z_0 Z_1 Z_2 Z_3$. Evaluating Clifford transformation $U = \prod_i e^{i \frac{\pi}{4} \tau_i X_i}$ in the Hartree-Fock sector ($|0101\rangle$) tapers the system down to a **single active qubit**:
+   The 4-qubit Jordan-Wigner Hamiltonian possesses three independent $\mathbb{Z}_2$ reflection symmetries commuting with $H$: $\tau_1 = Z_0 Z_3$ (`ZIIZ`), $\tau_2 = Z_1 Z_3$ (`ZIZI`), and $\tau_3 = Z_2 Z_3$ (`ZZII`), physically corresponding to $\alpha$- and $\beta$-orbital particle-number parity and total spin projection parity ($S_z$). Rather than selecting the symmetry sector by minimizing energy against $E_{\text{FCI}}$, the physical sector is uniquely determined by evaluating the expectation values of the symmetry operators directly on the reference Hartree-Fock state $|0101\rangle$:
+   $$\langle 0101 | \tau_1 | 0101 \rangle = -1, \quad \langle 0101 | \tau_2 | 0101 \rangle = +1, \quad \langle 0101 | \tau_3 | 0101 \rangle = -1 \implies \vec{s} = [-1, +1, -1]$$
+   Applying Clifford transformation and tapering with $\vec{s} = [-1, +1, -1]$ compresses the system to a **single active qubit**:
    $$H_{\text{Tapered-1q}} = -0.347596\, I + 0.564539\, Z + 0.361862\, X$$
+   preserving the exact ground energy to machine precision ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$).
 
 ### 4.2 Mapping Comparison Table (`results/tables/c1_mapping.csv`)
 
@@ -231,8 +234,13 @@ This yields **12 independent optimization trajectories** executed on Processor D
 ### 5.3 Convergence Dynamics and Insights
 1. **100% Attainment of Chemical Accuracy:** All 12 trajectories converged inside the chemical accuracy corridor ($|\Delta E| \le 1.6\text{ mHa}$), with the worst error being $+0.0013\text{ mHa}$ (over $1200\times$ below the chemical threshold).
 2. **COBYLA vs SPSA Efficiency:** COBYLA demonstrated overwhelming speed on the noiseless statevector landscape, reaching machine precision ($\Delta E < 10^{-8}\text{ Ha}$) in **60 to 131 evaluations**. SPSA required **451 calls** (including 50 Spall calibration samples) and reliably converged to sub-micro-Hartree errors ($\le 0.0013\text{ mHa}$), demonstrating excellent stability across all random seeds.
-3. **Ansatz Expressibility:** For the 2-qubit Parity Hamiltonian, Depth 1 ($L=1$, 4 parameters, 1 CX) is already fully expressive to span the $H_2$ ground-state subspace. Depth 2 ($L=2$, 6 parameters, 2 CX) introduces redundant rotational degrees of freedom, requiring slightly more COBYLA evaluations (83–131 vs 60–82) without yielding lower energy.
-4. **Optimal State Selection:** The global optimal state was identified at **Depth 2, COBYLA, Seed 2** ($E = -1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$), which was saved to `results/optimal_vqe_params.json` for subsequent shot-based and error mitigation benchmarks.
+3. **Ansatz Expressibility & Pareto Optimality:** For the 2-qubit Parity Hamiltonian, the ground state is an entangled singlet state $\approx 0.993|01\rangle - 0.117|10\rangle$. Depth 1 ($L=1$, 4 parameters, 1 CX on Processor D) already has enough variational degrees of freedom to reconstruct the exact ground state (error $0.0000\text{ mHa}$). Therefore, energy accuracy is flat across depths 1 and 2. Increasing depth to $L=2$ (2 CX on Processor D) merely introduces redundant rotational parameters, doubling two-qubit hardware depth from 1 to 2, increasing total transpiled depth from 9 to 14, and inflating COBYLA iterations from 60–82 to 83–131 (+39% cost overhead) without yielding lower energy. Hence, Depth 1 is Pareto-optimal.
+4. **Comprehensive Sweep Summary Statistics:**
+   * **Depth 1 COBYLA:** Mean error $+0.0000\text{ mHa}$, Max error $+0.0000\text{ mHa}$, Calls: 60, 75, 82 (Mean: 72.3).
+   * **Depth 1 SPSA:** Mean error $+0.0005\text{ mHa}$, Max error $+0.0012\text{ mHa}$, Calls: 451.
+   * **Depth 2 COBYLA:** Mean error $+0.0000\text{ mHa}$, Max error $+0.0000\text{ mHa}$, Calls: 83, 88, 131 (Mean: 100.7).
+   * **Depth 2 SPSA:** Mean error $+0.0011\text{ mHa}$, Max error $+0.0013\text{ mHa}$, Calls: 451.
+5. **Optimal State Selection:** The global optimal state was identified at **Depth 2, COBYLA, Seed 2** ($E = -1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$), which was saved to `results/optimal_vqe_params.json` for subsequent shot-based and error mitigation benchmarks.
 
 ---
 

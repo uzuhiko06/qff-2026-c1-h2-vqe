@@ -57,18 +57,15 @@ def run_mapping_and_reduction():
     print(f"Qubits: {cost_parity['qubits']}, Terms: {cost_parity['pauli_terms']}, Groups: {cost_parity['qwc_groups']}")
     print(f"Exact Energy: {e_exact_parity:.10f} Ha (diff: {abs(e_exact_parity - e_fci):.2e} Ha), CX on D: {cx_parity}")
     
-    # 3. Method B: Z2 Symmetry Tapering (1-Qubit Reduction)
+    # 3. Method B: Z2 Symmetry Tapering (1-Qubit Reduction from HF Symmetry Sector)
+    from qiskit.quantum_info import Statevector
     z2_syms = Z2Symmetries.find_z2_symmetries(op_jw)
-    tapered_ops = z2_syms.taper(op_jw)
-    
-    best_tapered_op = None
-    min_diff = 1.0
-    for top in tapered_ops:
-        eg = qff.exact_ground_energy(top, const_jw)
-        diff = abs(eg - e_fci)
-        if diff < min_diff:
-            min_diff = diff
-            best_tapered_op = top
+    sv_hf = Statevector.from_label(meta['hf_bitstring'])
+    hf_sector = [int(sv_hf.expectation_value(s).real) for s in z2_syms.symmetries]
+    print(f"Detected Z2 Symmetries: {[s.to_label() for s in z2_syms.symmetries]}")
+    print(f"Hartree-Fock state |{meta['hf_bitstring']}> symmetry sector: {hf_sector}")
+    z2_syms.tapering_values = hf_sector
+    best_tapered_op = z2_syms.taper(op_jw)
             
     cost_z2 = qff.pauli_cost(best_tapered_op)
     e_exact_z2 = qff.exact_ground_energy(best_tapered_op, const_jw)

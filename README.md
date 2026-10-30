@@ -27,33 +27,35 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 
 ### Final Verification Status:
 - [x] **Objective 2 (Step 1): Custom Processor D Hardware Co-Design (`processors/processor_D.json`)**
-  - 6-qubit chordal ring architecture featuring an all-to-all $K_4$ core on qubits $\{0, 1, 2, 3\}$ with cross-chords $(0,2)$ and $(1,3)$, extending to leaf 5.
-  - Eliminates routing SWAP overhead ($cx\_overhead = 0$) and minimizes two-qubit depth for $H_2$ molecular simulation.
-  - Validated via `tools/check_processor_d.py` ($\le 12$ qubits, max degree $\le 4$, connected, 161-word justification).
+  - 6-qubit chordal ring architecture featuring an all-to-all $K_4$ chemistry core on qubits $\{0, 1, 2, 3\}$ with cross-chords $(0,2)$ and $(1,3)$, extending to bridge qubit 4 and leaf qubit 5.
+  - Graph diameter is **$\text{diam}(G) = 3$**; maximum node degree is 4 (obeying max degree $\le 4$).
+  - Measured A/B Bottleneck: While a 1D linear-chain HEA trivially embeds on Processors A, B, and D without SWAPs, executing the complete multi-orbital molecular interaction graph (`Molecular-4q-Cross`) on Processor A's tree topology forces **2 SWAP gates (+6 CX gates, +100% two-qubit overhead)**, elevating two-qubit depth from 5 to 12. Processor D executes this complete interaction graph with **0 SWAPs and 0 CX overhead**.
+  - Validated via `tools/check_processor_d.py` (6 qubits, max degree 4, connected, 161-word justification).
 - [x] **Objective 1 (Step 2): Bell-State Verification on Processor D (`results/tables/bell.csv`)**
-  - Prepared $|\Phi^+\rangle = \frac{|00\rangle + |11\rangle}{\sqrt{2}}$ on physical pairs `(0, 1)` (distance 1) and `(0, 5)` (distance 3).
-  - Executed 12 circuits total across XX, YY, and ZZ bases (4,096 shots each) under ideal and noisy conditions.
+  - Prepared $|\Phi^+\rangle = \frac{|00\rangle + |11\rangle}{\sqrt{2}}$ on physical pairs `(0, 1)` (near pair, distance 1) and `(0, 5)` (farthest pair, graph diameter distance 3, shortest path $0 \to 2 \to 4 \to 5$).
+  - Executed 12 circuits total across XX, YY, and ZZ bases (4,096 shots each) under ideal and noisy conditions using the official noise model.
   - State fidelities:
     - Distance 1: $F_{\text{ideal}} = 1.0000 \pm 0.0000$, $F_{\text{noisy}} = 0.9633 \pm 0.0021$ ($CX = 1$)
     - Distance 3: $F_{\text{ideal}} = 1.0000 \pm 0.0000$, $F_{\text{noisy}} = 0.9471 \pm 0.0025$ ($CX = 7$, 2 routing SWAPs)
 - [x] **Objective 3 Part 1 (Step 3): Hamiltonian Mapping & Qubit Reduction (`results/tables/c1_mapping.csv`)**
   - **Baseline (Jordan-Wigner 4Q):** 14 non-identity terms, 5 QWC groups, $E = -1.1373060358\text{ Ha}$.
-  - **Parity Mapping with 2-Qubit Reduction (2Q):** Derived live from raw integrals, preserving particle-number parity ($N_\alpha=1, N_\beta=1$), slashing Pauli terms to 4 and QWC groups to 2. Exact ground energy matches $E_{\text{FCI}}$ with $|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$ (zero reduction loss).
-  - **$Z_2$ Symmetry Tapering (1Q):** Compressed to single active qubit ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$).
+  - **Parity Mapping with 2-Qubit Reduction (2Q):** Derived live from raw integrals, preserving particle-number parity ($N_\alpha=1, N_\beta=1$), slashing Pauli terms to 4 and QWC groups to 2. Exact ground energy matches $E_{\text{FCI}}$ with $|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$ (zero reduction loss to machine precision).
+  - **$Z_2$ Symmetry Tapering (1Q):** Tapered using 3 independent symmetries ($\tau_1 = Z_0 Z_3, \tau_2 = Z_1 Z_3, \tau_3 = Z_2 Z_3$). Evaluated on the Hartree-Fock bitstring $|0101\rangle$ to uniquely select the physical ground symmetry sector $[-1, +1, -1]$ without oracle energy minimization ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$).
 - [x] **Objective 3 Part 2 (Step 4): Depth $\times$ Optimizer Sweep (`results/tables/c1_sweep.csv`)**
   - 12 independent runs ($2 \text{ depths} \times 2 \text{ optimizers} \times 3 \text{ seeds}$) on Processor D.
-  - **100% of runs achieve chemical accuracy** ($|\Delta E| \le 1.6\text{ mHa}$, worst error $+0.0013\text{ mHa}$).
-  - Best overall: Depth 2, COBYLA, Seed 2 ($E = -1.13730604\text{ Ha}$, error $0.0000\text{ mHa}$).
+  - **Honest Expressibility Finding:** Depth 1 HEA ($L=1$, 1 CX) already has sufficient expressibility in the 2-qubit parity subspace to reconstruct the singlet ground state. Increasing depth to $L=2$ (2 CX) yields no additional accuracy (accuracy is flat at chemical accuracy across all seeds), but doubles entangling gates and increases COBYLA calls from 60–82 to 83–131. Thus, Depth 1 is Pareto-optimal.
+  - Optimizer performance: COBYLA achieves exact FCI energy ($0.0000\text{ mHa}$ error) in 60–131 calls. SPSA with Spall calibration converges to $\le 0.0013\text{ mHa}$ error in 451 calls.
 - [x] **Objective 3 Part 3 (Step 5): Finite Shot Budget & Standard Error Scaling (`results/tables/c1_shots.csv`)**
   - Evaluated optimal state at 1,024 and 8,192 shots/group, ideal and noisy on Processor D.
   - Standard error shrinks by **$2.74\times$ (ideal)** and **$2.77\times$ (noisy)**, closely matching the theoretical CLT limit $\sqrt{8} \approx 2.8284\times$.
-  - Ideal 8,192 shots spans chemical accuracy within $1\sigma$ ($-1.81 \pm 2.84\text{ mHa}$). Noisy execution experiences $+31.45\text{ mHa}$ depolarizing bias.
+  - Ideal 8,192 shots spans chemical accuracy within $1\sigma$ ($-1.81 \pm 2.84\text{ mHa}$).
+  - **Honest Noisy Finding:** Unmitigated noisy execution experiences a $+31.45 \pm 3.33\text{ mHa}$ depolarizing bias and fails chemical accuracy. Shot scaling suppresses statistical variance but cannot eliminate physical hardware bias.
 - [x] **Objective 3 Part 4 (Step 6): Architecture Benchmarking across Processors A, B, and D (`results/tables/resources.csv`)**
   - Evaluated 5 representative circuits across Processor A (5Q tree), Processor B (9Q mesh), and Processor D (6Q co-design).
   - Demonstrates that Processor D eliminates **2 SWAP gates and 6 CX overhead (+100%)** on complete $K_4$ molecular cross-orbital circuits, while strictly obeying the degree $\le 4$ constraint.
 - [x] **Objective 4: Validation & Autonomous Reproducibility (`requirements.txt`, `main.ipynb`, `tools/verify_submission.py`)**
-  - Fully pinned environment without dependency rot; `main.ipynb` executes autonomously in 39 seconds on CPU.
-  - Automated verification test suite (`tools/verify_submission.py`) checks all 6 submission requirements with 100% PASS.
+  - Fully pinned environment; `main.ipynb` executes autonomously in 39 seconds on CPU.
+  - Automated verification test suite (`tools/verify_submission.py`) checks all submission requirements with 100% PASS.
 - [x] **Objective 5: Technical Analysis & Strategic Recommendation (`report.md`)**
   - Publication-grade report detailing which choices most changed accuracy vs cost, hardware noise physics, and limitations.
 - [x] **Bonus Experiments (Step 7): Quantum Error Mitigation & Second-Ansatz Study (`results/tables/error_mitigation_benchmark.csv`)**
@@ -63,25 +65,40 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 
 ---
 
-## 📊 Summary Results Tables
+## 📊 Summary Results Tables (All 5 Required Tables + Bonus)
 
-### 1. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
+### 1. Bell-State Verification (`bell.csv`)
+| Pair | Distance | Condition | 2Q Gates ($CX$) | $\langle XX \rangle \pm \text{SE}$ | $\langle YY \rangle \pm \text{SE}$ | $\langle ZZ \rangle \pm \text{SE}$ | Fidelity $F \pm \text{SE}$ |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **(0, 1)** | 1 | ideal | 1 | $+1.0000 \pm 0.0000$ | $-1.0000 \pm 0.0000$ | $+1.0000 \pm 0.0000$ | **$1.0000 \pm 0.0000$** |
+| **(0, 1)** | 1 | noisy | 1 | $+0.9458 \pm 0.0051$ | $-0.9521 \pm 0.0048$ | $+0.9551 \pm 0.0046$ | **$0.9633 \pm 0.0021$** |
+| **(0, 5)** | 3 | ideal | 7 | $+1.0000 \pm 0.0000$ | $-1.0000 \pm 0.0000$ | $+1.0000 \pm 0.0000$ | **$1.0000 \pm 0.0000$** |
+| **(0, 5)** | 3 | noisy | 7 | $+0.9302 \pm 0.0057$ | $-0.9199 \pm 0.0061$ | $+0.9385 \pm 0.0054$ | **$0.9471 \pm 0.0025$** |
+
+### 2. Hamiltonian Mapping & Reduction (`c1_mapping.csv`)
+| Operator Label | Method | Qubits | Pauli Terms | QWC Groups | Exact Ground Energy (Ha) | Error vs $E_{\text{FCI}}$ (Ha) | CX on Processor D |
+|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| **`JW-4q`** | Jordan-Wigner | 4 | 14 | 5 | $-1.1373060358$ | $0.00 \times 10^0$ | 3 |
+| **`Parity-2q`** | parity-2q | 2 | 4 | 2 | $-1.1373060358$ | $\mathbf{1.33 \times 10^{-15}}$ | 1 |
+| **`Tapered-1q`** | Z2-tapering | 1 | 2 | 2 | $-1.1373060358$ | $\mathbf{1.33 \times 10^{-15}}$ | 0 |
+
+### 3. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
 | Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60–82 | 1 | 9 | **PASS** |
-| 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ | 451 | 1 | 9 | **PASS** |
-| 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83–131 | 2 | 14 | **PASS** |
-| 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ | 451 | 2 | 14 | **PASS** |
+| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60, 75, 82 (mean 72.3) | 1 | 9 | **PASS** |
+| 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ (mean 0.0005) | 451 | 1 | 9 | **PASS** |
+| 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83, 88, 131 (mean 100.7) | 2 | 14 | **PASS** |
+| 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ (mean 0.0011) | 451 | 2 | 14 | **PASS** |
 
-### 2. Shot Estimation Scaling (`c1_shots.csv`)
-| Shots / Group | Condition | Measured Energy (Ha) | Standard Error (Ha) | Error vs FCI (mHa) | Total Shots |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1,024 | ideal | $-1.145911$ | $0.007790$ | $-8.6052$ | 2,048 |
-| 1,024 | noisy_D | $-1.110266$ | $0.009214$ | $+27.0397$ | 2,048 |
-| 8,192 | ideal | $-1.139118$ | $0.002841$ | **$-1.8121$** (Chem Acc $\pm 1\sigma$) | 16,384 |
-| 8,192 | noisy_D | $-1.105855$ | $0.003332$ | $+31.4515$ | 16,384 |
+### 4. Shot Estimation Scaling (`c1_shots.csv`)
+| Shots / Group | Condition | Measured Energy (Ha) | Standard Error (Ha) | Error vs FCI (mHa) | Total Shots | Chemical Accuracy Status |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1,024 | ideal | $-1.145911$ | $0.007790$ | $-8.6052$ | 2,048 | Overlaps within $1.1\sigma$ ($E \pm \text{SE}$) |
+| 1,024 | noisy_D | $-1.110266$ | $0.009214$ | $+27.0397$ | 2,048 | Not Achieved (Depolarizing bias) |
+| 8,192 | ideal | $-1.139118$ | $0.002841$ | **$-1.8121$** | 16,384 | **Spans CA within $1\sigma$** ($[-4.65, +1.03]$ mHa covers $0 \pm 1.6$) |
+| 8,192 | noisy_D | $-1.105855$ | $0.003332$ | $+31.4515$ | 16,384 | Not Achieved (Unmitigated hardware noise shift) |
 
-### 3. Architecture Routing Resources (`resources.csv`)
+### 5. Architecture Routing Resources (`resources.csv`)
 | Circuit Label | Metric | Processor A (5Q Tree) | Processor B (9Q Mesh) | Processor D (6Q Co-Design) |
 |---|---|:---:|:---:|:---:|
 | `Molecular-4q-Cross` | **Physical CX** | **12** | **6** | **6** |
@@ -89,7 +106,7 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 | `Molecular-4q-Cross` | **Routing SWAPs**| **2** | **0** | **0** |
 | `Molecular-4q-Cross` | **CX Overhead** | **+6 (+100%)** | **0** | **0** |
 
-### 4. Quantum Error Mitigation Benchmark (`error_mitigation_benchmark.csv`)
+### 6. Quantum Error Mitigation Benchmark (`error_mitigation_benchmark.csv`)
 | Protocol | Noise Scale $\lambda$ | Energy (Ha) | Error vs FCI (mHa) | Status |
 |---|:---:|:---:|:---:|:---:|
 | Raw Noisy on Processor D | 1 | $-1.105855$ | $+31.451$ | Unmitigated Baseline |
@@ -103,7 +120,9 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 
 ## Submission Repository Structure (Section 11 Compliant)
 
-This repository strictly implements the project layout specified in Section 11 of the Official Challenge Rules:
+> **Organizer Directive:** *"For phase 2 not a separate folder just work on the root folder of your project! All the files and folders of phase 1 create a folder and move into it and name it as phase 1."*
+
+This repository strictly complies with the organizer layout specification. All active Phase 2 submission deliverables reside directly in the project root:
 
 ```text
 .
@@ -151,8 +170,7 @@ This repository strictly implements the project layout specified in Section 11 o
 │   ├── run_bonus_study.py             # QEM (REM + ZNE) & Givens ansatz study script
 │   ├── plot_processor_graphs.py       # Processor graph diagram generator
 │   └── build_phase2_notebook.py       # Programmatic notebook builder
-├── PHASE_ONE/                         # Archived Phase 1 submission deliverables
-└── PHASE_TWO/                         # Phase 2 development workspace
+└── phase 1/                           # Archived Phase 1 submission deliverables (not graded)
 ```
 
 ---

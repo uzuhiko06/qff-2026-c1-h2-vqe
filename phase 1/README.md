@@ -1,4 +1,9 @@
-# Qiskit Fall Fest 2026 — Problem Statement C1
+> [!NOTE]
+> ## ⚠️ ARCHIVED PHASE 1 DELIVERABLES (NOT GRADED FOR PHASE 2)
+> **Notice to Evaluators:** This folder (`phase 1/`) contains the archived deliverables from Phase 1.
+> Per official organizer guidelines, **all Phase 2 evaluation materials are located exclusively in the project root folder** (`main.ipynb`, `report.md`, `README.md`, `requirements.txt`, `processors/processor_D.json`, `results/tables/`, `results/figures/`).
+
+# Qiskit Fall Fest 2026 — Problem Statement C1 (Phase 1 Archive)
 ## Molecular Ground-State Energy ($H_2$) via VQE, Architecture Co-Design & Quantum Error Mitigation
 
 ![Qiskit](https://img.shields.io/badge/Qiskit-2.5.2-blue?logo=qiskit)

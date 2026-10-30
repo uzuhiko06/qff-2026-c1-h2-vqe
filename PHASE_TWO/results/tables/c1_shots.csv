@@ -1,5 +1,0 @@
-shots_per_group,condition,energy,std_error,error_mha,groups,total_shots
-1024,ideal,-1.145911,0.00779,-8.6052,2,2048
-1024,noisy_D,-1.110266,0.009214,27.0397,2,2048
-8192,ideal,-1.139118,0.002841,-1.8121,2,16384
-8192,noisy_D,-1.105855,0.003332,31.4515,2,16384
