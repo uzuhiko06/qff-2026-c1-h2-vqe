@@ -95,12 +95,20 @@ def run_shots_study():
     print(f"Measured Ideal SE Ratio: {se_ideal_1024:.6f} / {se_ideal_8192:.6f} = {ratio_ideal:.4f}")
     print(f"Measured Noisy SE Ratio: {se_noisy_1024:.6f} / {se_noisy_8192:.6f} = {ratio_noisy:.4f}")
     
+    # Statistical projection for 3-sigma chemical accuracy (SE <= 0.533 mHa)
+    target_se = 0.0016 / 3.0 # 0.533 mHa
+    shots_for_3sigma = int(((se_ideal_8192) / target_se)**2 * 8192)
+    print(f"\n--- Statistical Projection for Rigorous 3-Sigma Chemical Accuracy ---")
+    print(f"At 8,192 shots: Ideal SE = {se_ideal_8192*1000:.3f} mHa. |Error| = {abs(rows[2]['error_mha']):.2f} mHa.")
+    print(f"To guarantee |E - E_FCI| <= 1.6 mHa at 3-sigma confidence requires SE <= 0.53 mHa.")
+    print(f"Projected shots per group: ~{shots_for_3sigma:,} shots (~2.6x10^5 shots/group).")
+    
     # 6. Generate Plot of Shot Estimation and Noise Shift
     figures_dir = os.path.join(root, "results", "figures")
     os.makedirs(figures_dir, exist_ok=True)
     fig_path = os.path.join(figures_dir, "shot_estimation_and_noise.png")
     
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5), dpi=300)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5.2), dpi=300)
     
     # Subplot 1: Energy Estimates with Standard Error Bars vs E_FCI
     x_indices = np.arange(4)
@@ -116,8 +124,8 @@ def run_shots_study():
     ax1.set_xticklabels(x_labels, fontsize=10, fontweight="bold")
     ax1.set_ylabel("Ground State Energy (Hartree)", fontsize=11, fontweight="bold")
     ax1.set_title("Shot-Based Ground State Energy Estimates", fontsize=12, fontweight="bold", pad=10)
-    ax1.set_ylim(-1.145, -1.095)
-    ax1.legend(loc="lower right", framealpha=0.9)
+    ax1.set_ylim(-1.145, -1.090)
+    ax1.legend(loc="upper left", framealpha=0.9)
     ax1.grid(axis="y", linestyle=":", alpha=0.6)
     
     for bar, e, se in zip(bars, energies, errors):
@@ -125,8 +133,8 @@ def run_shots_study():
         
     # Subplot 2: Standard Error Shrinkage (Ideal vs Noisy)
     shot_counts = [1024, 8192]
-    ax2.plot(shot_counts, [se_ideal_1024*1000, se_ideal_8192*1000], "o-", color="#2b5c8f", linewidth=2.0, markersize=8, label=f"Ideal SE (Ratio: {ratio_ideal:.2f}x)")
-    ax2.plot(shot_counts, [se_noisy_1024*1000, se_noisy_8192*1000], "s--", color="#d95f02", linewidth=2.0, markersize=8, label=f"Noisy SE on D (Ratio: {ratio_noisy:.2f}x)")
+    ax2.plot(shot_counts, [se_ideal_1024*1000, se_ideal_8192*1000], "o-", color="#2b5c8f", linewidth=2.0, markersize=8, label=f"Ideal SE ({ratio_ideal:.2f}x shrinkage)")
+    ax2.plot(shot_counts, [se_noisy_1024*1000, se_noisy_8192*1000], "s--", color="#d95f02", linewidth=2.0, markersize=8, label=f"Noisy SE on D ({ratio_noisy:.2f}x shrinkage)")
     
     # Theoretical 1/sqrt(N) guide
     guide_x = np.linspace(1000, 8500, 100)
@@ -134,7 +142,7 @@ def run_shots_study():
     ax2.plot(guide_x, guide_y, ":", color="gray", label=r"Theory: $\propto 1/\sqrt{N_{\rm shots}}$ ($\sqrt{8}\approx 2.83\times$)")
     
     ax2.set_xscale("log")
-    ax2.set_xticks([1024, 2048, 4096, 8192])
+    ax2.set_xticks([1024, 8192])
     ax2.get_xaxis().set_major_formatter(plt.ScalarFormatter())
     ax2.set_xlabel("Shots per Measurement Group", fontsize=11, fontweight="bold")
     ax2.set_ylabel("Standard Error (mHa)", fontsize=11, fontweight="bold")

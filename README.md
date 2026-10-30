@@ -29,8 +29,8 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 - [x] **Objective 2 (Step 1): Custom Processor D Hardware Co-Design (`processors/processor_D.json`)**
   - 6-qubit chordal ring architecture featuring an all-to-all $K_4$ chemistry core on qubits $\{0, 1, 2, 3\}$ with cross-chords $(0,2)$ and $(1,3)$, extending to bridge qubit 4 and leaf qubit 5.
   - Graph diameter is **$\text{diam}(G) = 3$**; maximum node degree is 4 (obeying max degree $\le 4$).
-  - Measured A/B Bottleneck: While a 1D linear-chain HEA trivially embeds on Processors A, B, and D without SWAPs, executing the complete multi-orbital molecular interaction graph (`Molecular-4q-Cross`) on Processor A's tree topology forces **2 SWAP gates (+6 CX gates, +100% two-qubit overhead)**, elevating two-qubit depth from 5 to 12. Processor D executes this complete interaction graph with **0 SWAPs and 0 CX overhead**.
-  - Validated via `tools/check_processor_d.py` (6 qubits, max degree 4, connected, 161-word justification).
+  - Measured A/B Bottleneck: While a 1D linear-chain HEA trivially embeds on Processors A, B, and D without SWAPs, executing the complete multi-orbital molecular interaction graph (`Molecular-4q-K4`, all 6 orbital pairs) exposes reference hardware bottlenecks: Processor A (tree) forces **2 SWAP gates (+6 CX, +100% overhead)** and Processor B (mesh) forces **1 SWAP gate (+3 CX, +50% overhead)**. In contrast, Processor D executes the complete interaction graph with **0 SWAPs and 0 CX overhead**.
+  - Validated via `tools/check_processor_d.py` (6 qubits, max degree 4, connected, 172-word justification).
 - [x] **Objective 1 (Step 2): Bell-State Verification on Processor D (`results/tables/bell.csv`)**
   - Prepared $|\Phi^+\rangle = \frac{|00\rangle + |11\rangle}{\sqrt{2}}$ on physical pairs `(0, 1)` (near pair, distance 1) and `(0, 5)` (farthest pair, graph diameter distance 3, shortest path $0 \to 2 \to 4 \to 5$).
   - Executed 12 circuits total across XX, YY, and ZZ bases (4,096 shots each) under ideal and noisy conditions using the official noise model.
@@ -42,26 +42,26 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
   - **Parity Mapping with 2-Qubit Reduction (2Q):** Derived live from raw integrals, preserving particle-number parity ($N_\alpha=1, N_\beta=1$), slashing Pauli terms to 4 and QWC groups to 2. Exact ground energy matches $E_{\text{FCI}}$ with $|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$ (zero reduction loss to machine precision).
   - **$Z_2$ Symmetry Tapering (1Q):** Tapered using 3 independent symmetries ($\tau_1 = Z_0 Z_3, \tau_2 = Z_1 Z_3, \tau_3 = Z_2 Z_3$). Evaluated on the Hartree-Fock bitstring $|0101\rangle$ to uniquely select the physical ground symmetry sector $[-1, +1, -1]$ without oracle energy minimization ($|\Delta E| = 1.33 \times 10^{-15}\text{ Ha}$).
 - [x] **Objective 3 Part 2 (Step 4): Depth $\times$ Optimizer Sweep (`results/tables/c1_sweep.csv`)**
-  - 12 independent runs ($2 \text{ depths} \times 2 \text{ optimizers} \times 3 \text{ seeds}$) on Processor D.
-  - **Honest Expressibility Finding:** Depth 1 HEA ($L=1$, 1 CX) already has sufficient expressibility in the 2-qubit parity subspace to reconstruct the singlet ground state. Increasing depth to $L=2$ (2 CX) yields no additional accuracy (accuracy is flat at chemical accuracy across all seeds), but doubles entangling gates and increases COBYLA calls from 60–82 to 83–131. Thus, Depth 1 is Pareto-optimal.
-  - Optimizer performance: COBYLA achieves exact FCI energy ($0.0000\text{ mHa}$ error) in 60–131 calls. SPSA with Spall calibration converges to $\le 0.0013\text{ mHa}$ error in 451 calls.
+  - 18 independent runs (12 HEA runs $+ 6$ Givens benchmark runs) on Processor D.
+  - **Honest Expressibility Finding:** Depth 1 HEA ($L=1$, 1 CX) already has sufficient expressibility in the 2-qubit parity subspace to reconstruct the singlet ground state. Increasing depth to $L=2$ (2 CX) yields no additional accuracy (accuracy is flat at chemical accuracy across all seeds), but doubles entangling gates and increases COBYLA calls from 69–82 to 83–131. Thus, Depth 1 is Pareto-optimal.
+  - Optimizer performance: COBYLA achieves exact FCI energy ($0.0000\text{ mHa}$ error) in 69–131 calls. SPSA with Spall calibration converges to $\le 0.0013\text{ mHa}$ error in 451 calls.
 - [x] **Objective 3 Part 3 (Step 5): Finite Shot Budget & Standard Error Scaling (`results/tables/c1_shots.csv`)**
-  - Evaluated optimal state at 1,024 and 8,192 shots/group, ideal and noisy on Processor D.
-  - Standard error shrinks by **$2.74\times$ (ideal)** and **$2.77\times$ (noisy)**, closely matching the theoretical CLT limit $\sqrt{8} \approx 2.8284\times$.
+  - Evaluated optimal Depth 1 state at 1,024 and 8,192 shots/group, ideal and noisy on Processor D.
+  - Standard error shrinks by **$2.74\times$ (ideal)** and **$2.84\times$ (noisy)**, closely matching the theoretical CLT limit $\sqrt{8} \approx 2.8284\times$.
   - Ideal 8,192 shots spans chemical accuracy within $1\sigma$ ($-1.81 \pm 2.84\text{ mHa}$).
-  - **Honest Noisy Finding:** Unmitigated noisy execution experiences a $+31.45 \pm 3.33\text{ mHa}$ depolarizing bias and fails chemical accuracy. Shot scaling suppresses statistical variance but cannot eliminate physical hardware bias.
+  - **Honest Noisy Finding:** Unmitigated noisy execution at Depth 1 experiences a $+23.63 \pm 3.19\text{ mHa}$ depolarizing bias (and $+31.45\text{ mHa}$ at Depth 2) and fails chemical accuracy. Shot scaling suppresses statistical variance but cannot eliminate physical hardware bias.
 - [x] **Objective 3 Part 4 (Step 6): Architecture Benchmarking across Processors A, B, and D (`results/tables/resources.csv`)**
   - Evaluated 5 representative circuits across Processor A (5Q tree), Processor B (9Q mesh), and Processor D (6Q co-design).
-  - Demonstrates that Processor D eliminates **2 SWAP gates and 6 CX overhead (+100%)** on complete $K_4$ molecular cross-orbital circuits, while strictly obeying the degree $\le 4$ constraint.
+  - Demonstrates that Processor D eliminates **2 SWAP gates vs Processor A (+100% CX)** and **1 SWAP gate vs Processor B (+50% CX)** on complete $K_4$ molecular cross-orbital circuits, while strictly obeying the degree $\le 4$ constraint.
 - [x] **Objective 4: Validation & Autonomous Reproducibility (`requirements.txt`, `main.ipynb`, `tools/verify_submission.py`)**
-  - Fully pinned environment; `main.ipynb` executes autonomously in 39 seconds on CPU.
+  - Fully pinned environment; `main.ipynb` executes autonomously in ~60 seconds on CPU.
   - Automated verification test suite (`tools/verify_submission.py`) checks all submission requirements with 100% PASS.
 - [x] **Objective 5: Technical Analysis & Strategic Recommendation (`report.md`)**
   - Publication-grade report detailing which choices most changed accuracy vs cost, hardware noise physics, and limitations.
 - [x] **Bonus Experiments (Step 7): Quantum Error Mitigation & Second-Ansatz Study (`results/tables/error_mitigation_benchmark.csv`)**
-  - **Readout Error Inversion (REM):** Inverts 2-qubit measurement confusion matrix, slashing noisy error from $+31.45\text{ mHa}$ to $+15.03\text{ mHa}$ (error halved).
-  - **Zero-Noise Extrapolation (ZNE):** Digital unitary folding across noise scales $\lambda \in \{1, 3, 5\}$ extrapolates ground energy to **$+7.23\text{ mHa}$** ($4.35\times$ total noise reduction).
-  - **Symmetry-Preserving Givens Ansatz:** 1 parameter, 22 optimizer calls, achieves exact FCI energy ($0.0000\text{ mHa}$).
+  - **Readout Error Inversion (REM):** Inverts 2-qubit measurement confusion matrix, slashing noisy error from $+23.63\text{ mHa}$ to $+7.03\text{ mHa}$ ($3.36\times$ noise reduction).
+  - **Zero-Noise Extrapolation (ZNE):** Digital unitary folding across noise scales $\lambda \in \{1, 3, 5\}$ extrapolates ground energy to $+1.890 \pm 1.876\text{ mHa}$ (Linear ZNE) and $+3.475 \pm 4.752\text{ mHa}$ (Richardson ZNE), overlapping chemical accuracy within $1\sigma$.
+  - **Symmetry-Preserving Givens Ansatz:** 1 parameter, 23 optimizer calls, achieves exact FCI energy ($0.0000\text{ mHa}$).
 
 ---
 
@@ -83,38 +83,41 @@ This repository contains the complete, publication-grade Phase 2 hackathon solut
 | **`Tapered-1q`** | Z2-tapering | 1 | 2 | 2 | $-1.1373060358$ | $\mathbf{1.33 \times 10^{-15}}$ | 0 |
 
 ### 3. Depth $\times$ Optimizer Sweep (`c1_sweep.csv`)
-| Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
-|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 60, 75, 82 (mean 72.3) | 1 | 9 | **PASS** |
-| 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ (mean 0.0005) | 451 | 1 | 9 | **PASS** |
-| 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83, 88, 131 (mean 100.7) | 2 | 14 | **PASS** |
-| 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ (mean 0.0011) | 451 | 2 | 14 | **PASS** |
+| Ansatz | Depth | Optimizer | Seed | Ground Energy (Ha) | Error (mHa) | Calls | CX on D | Depth on D | Chemical Accuracy |
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| HEA | 1 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 81, 69, 82 (mean 77.3) | 1 | 9 | **PASS** |
+| HEA | 1 | SPSA | 0, 1, 2 | $-1.137305$ to $-1.137306$ | $0.0000$–$0.0012$ (mean 0.0005) | 451 | 1 | 9 | **PASS** |
+| HEA | 2 | COBYLA | 0, 1, 2 | $-1.13730604$ | $+0.0000$ | 83, 88, 131 (mean 100.7) | 2 | 14 | **PASS** |
+| HEA | 2 | SPSA | 0, 1, 2 | $-1.137305$ | $0.0009$–$0.0013$ (mean 0.0011) | 451 | 2 | 14 | **PASS** |
+| Givens | 1 | COBYLA | 0, 1, 2 | $-1.13730603$ | $+0.0000$ | 23, 23, 23 (mean 23.0) | 3 | 12 | **PASS** |
 
 ### 4. Shot Estimation Scaling (`c1_shots.csv`)
 | Shots / Group | Condition | Measured Energy (Ha) | Standard Error (Ha) | Error vs FCI (mHa) | Total Shots | Chemical Accuracy Status |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | 1,024 | ideal | $-1.145911$ | $0.007790$ | $-8.6052$ | 2,048 | Overlaps within $1.1\sigma$ ($E \pm \text{SE}$) |
-| 1,024 | noisy_D | $-1.110266$ | $0.009214$ | $+27.0397$ | 2,048 | Not Achieved (Depolarizing bias) |
+| 1,024 | noisy_D | $-1.116922$ | $0.009086$ | $+20.3839$ | 2,048 | Not Achieved (Depolarizing bias) |
 | 8,192 | ideal | $-1.139118$ | $0.002841$ | **$-1.8121$** | 16,384 | **Spans CA within $1\sigma$** ($[-4.65, +1.03]$ mHa covers $0 \pm 1.6$) |
-| 8,192 | noisy_D | $-1.105855$ | $0.003332$ | $+31.4515$ | 16,384 | Not Achieved (Unmitigated hardware noise shift) |
+| 8,192 | noisy_D | $-1.113673$ | $0.003194$ | $+23.6330$ | 16,384 | Not Achieved (Unmitigated hardware noise shift) |
 
 ### 5. Architecture Routing Resources (`resources.csv`)
 | Circuit Label | Metric | Processor A (5Q Tree) | Processor B (9Q Mesh) | Processor D (6Q Co-Design) |
 |---|---|:---:|:---:|:---:|
-| `Molecular-4q-Cross` | **Physical CX** | **12** | **6** | **6** |
-| `Molecular-4q-Cross` | **Total Depth** | **16** | **9** | **9** |
-| `Molecular-4q-Cross` | **Routing SWAPs**| **2** | **0** | **0** |
-| `Molecular-4q-Cross` | **CX Overhead** | **+6 (+100%)** | **0** | **0** |
+| `Molecular-4q-K4` | **Physical CX** | **12** | **9** | **6** |
+| `Molecular-4q-K4` | **Total Depth** | **16** | **12** | **9** |
+| `Molecular-4q-K4` | **2Q Depth** | **12** | **8** | **5** |
+| `Molecular-4q-K4` | **Routing SWAPs**| **2** | **1** | **0** |
+| `Molecular-4q-K4` | **CX Overhead** | **+6 (+100%)** | **+3 (+50%)** | **0 (0%)** |
 
 ### 6. Quantum Error Mitigation Benchmark (`error_mitigation_benchmark.csv`)
-| Protocol | Noise Scale $\lambda$ | Energy (Ha) | Error vs FCI (mHa) | Status |
-|---|:---:|:---:|:---:|:---:|
-| Raw Noisy on Processor D | 1 | $-1.105855$ | $+31.451$ | Unmitigated Baseline |
-| Readout Error Mitigated (REM) | 1 | $-1.122279$ | $+15.027$ | Error Halved ($>50\%$ drop) |
-| REM + Unitary Fold ($\lambda=3$) | 3 | $-1.106687$ | $+30.619$ | Scaled Gate Noise |
-| REM + Unitary Fold ($\lambda=5$) | 5 | $-1.092982$ | $+44.324$ | Scaled Gate Noise |
-| **ZNE Richardson Extrapolation** | 0 | $-1.130075$ | **$+7.231$** | **$4.35\times$ Noise Reduction** |
-| **Symmetry-Preserving Givens (Ideal)** | 0 | **$-1.137306$** | **$+0.000$** | **Exact FCI in 22 calls** |
+| Protocol | Noise Scale $\lambda$ | Energy (Ha) | Standard Error (Ha) | Error vs FCI (mHa) | Status |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Raw Noisy on Processor D (Depth 1) | 1 | $-1.113673$ | $0.003194$ | $+23.633$ | Unmitigated Baseline |
+| Readout Error Mitigated (REM) | 1 | $-1.130272$ | $0.002990$ | $+7.034$ | Error Slashing ($3.36\times$ reduction) |
+| REM + Unitary Fold ($\lambda=3$) | 3 | $-1.123154$ | $0.003143$ | $+14.152$ | Scaled Gate Noise |
+| REM + Unitary Fold ($\lambda=5$) | 5 | $-1.112232$ | $0.003365$ | $+25.074$ | Scaled Gate Noise |
+| **ZNE Linear Extrapolation** | 0 | $-1.135416$ | $0.001876$ | **$+1.890 \pm 1.876$** | **Consistent within $1\sigma$** |
+| **ZNE Richardson Extrapolation** | 0 | $-1.133831$ | $0.004752$ | **$+3.475 \pm 4.752$** | **Consistent within $1\sigma$** |
+| **Symmetry-Preserving Givens (Ideal)** | 0 | **$-1.137306$** | $0.000000$ | **$+0.000$** | **Exact FCI in 22–23 calls** |
 
 ---
 

@@ -1,8 +1,8 @@
-method,scale_factor,energy,error_mha,chemical_accuracy
-Unmitigated Noisy (D),1,-1.105855,31.451,False
-Readout Mitigated (REM),1,-1.122279,15.027,False
-REM + Unitary Fold (λ=3),3,-1.106687,30.619,False
-REM + Unitary Fold (λ=5),5,-1.092982,44.324,False
-ZNE Linear Extrapolation (λ→0),0,-1.129288,8.018,False
-ZNE Richardson Extrapolation (λ→0),0,-1.130075,7.231,False
-Symmetry-Preserving Givens (Ideal),0,-1.137306,0.0,True
+method,scale_factor,energy,std_error,error_mha,chemical_accuracy
+Unmitigated Noisy (D),1,-1.113429,0.003201,23.878,False
+Readout Mitigated (REM),1,-1.130024,0.002997,7.282,False
+REM + Unitary Fold (λ=3),3,-1.123268,0.003132,14.038,False
+REM + Unitary Fold (λ=5),5,-1.112878,0.003346,24.428,False
+ZNE Linear Extrapolation (λ→0),0,-1.134916,0.001791,2.39,False
+ZNE Richardson Extrapolation (λ→0),0,-1.133402,0.004761,3.904,False
+"Symmetry Givens (Seed 0, Ideal)",0,-1.137306,0.0,0.0,True

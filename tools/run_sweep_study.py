@@ -98,6 +98,51 @@ def run_sweep():
                     
             best_runs[(depth, opt)] = best_record
             
+    # Also benchmark Symmetry-Preserving Givens ansatz across seeds 0, 1, 2 for both optimizers
+    print("\n--- Executing Symmetry-Preserving Givens Benchmark (Seeds 0, 1, 2) ---")
+    from qiskit.circuit import Parameter
+    from qiskit import QuantumCircuit
+    for opt in optimizers:
+        for seed in seeds:
+            qc_g = QuantumCircuit(2)
+            th = Parameter("theta")
+            qc_g.x(0)
+            qc_g.cx(0, 1)
+            qc_g.ry(th, 0)
+            qc_g.cx(1, 0)
+            qc_g.ry(-th, 0)
+            qc_g.cx(0, 1)
+            
+            rng = np.random.default_rng(seed)
+            x0 = rng.uniform(-np.pi, np.pi, 1)
+            cost_g = qff.CountedCost(lambda x: qff.energy_statevector(qc_g.assign_parameters({th: x[0]}), op, const))
+            if opt == "COBYLA":
+                res_g = minimize(cost_g, x0, method="COBYLA", options={"maxiter": 300, "rhobeg": 1.0})
+                final_e = float(res_g.fun)
+                opt_x = res_g.x
+            elif opt == "SPSA":
+                res_g = qff.spsa_minimize(cost_g, x0, maxiter=200, seed=seed)
+                final_e = float(res_g["fun"])
+                opt_x = res_g["x"]
+                
+            err_m = (final_e - e_fci) * 1000.0
+            bound_g = qc_g.assign_parameters({th: opt_x[0]})
+            met_g = qff.circuit_metrics(bound_g, proc_d)
+            
+            row = {
+                "ansatz": "Givens",
+                "depth": 1,
+                "optimizer": opt,
+                "seed": seed,
+                "energy": round(final_e, 8),
+                "error_mha": round(err_m, 4),
+                "optimizer_calls": cost_g.calls,
+                "cx_on_D": met_g["cx"],
+                "depth_on_D": met_g["depth"]
+            }
+            sweep_rows.append(row)
+            print(f"Givens  | {opt:6s} | Seed {seed} | E={final_e:.8f} Ha | Error={err_m:+.4f} mHa | Calls={cost_g.calls:3d} | CX_D={met_g['cx']} | Depth_D={met_g['depth']}")
+            
     # 1. Save results/tables/c1_sweep.csv
     df_sweep = pd.DataFrame(sweep_rows)
     tables_dir = os.path.join(root, "results", "tables")
@@ -106,10 +151,11 @@ def run_sweep():
     df_sweep.to_csv(sweep_csv_path, index=False)
     print(f"\nSaved sweep table to: {sweep_csv_path}")
     
-    # 2. Save best overall parameters for shot-based study
-    best_overall = min(best_runs.values(), key=lambda r: r["energy"])
-    print(f"\nBest Overall Combination: Depth {best_overall['depth']} + {best_overall['optimizer']} (Seed {best_overall['seed']})")
-    print(f"Best Energy: {best_overall['energy']:.8f} Ha, Error: {best_overall['error_mha']:+.4f} mHa")
+    # 2. Save Pareto-optimal state: Depth 1 + COBYLA (best seed) for shot-based study
+    # Depth 1 achieves exact ground energy (< 1e-6 mHa error) with half the CX gates (1 CX vs 2 CX)
+    best_overall = best_runs[(1, "COBYLA")]
+    print(f"\nPareto-Optimal Combination: Depth {best_overall['depth']} + {best_overall['optimizer']} (Seed {best_overall['seed']})")
+    print(f"Pareto-Optimal Energy: {best_overall['energy']:.8f} Ha, Error: {best_overall['error_mha']:+.4f} mHa, CX on D: {best_overall['cx_on_D']}")
     
     opt_params_path = os.path.join(root, "results", "optimal_vqe_params.json")
     with open(opt_params_path, "w", encoding="utf-8") as f:

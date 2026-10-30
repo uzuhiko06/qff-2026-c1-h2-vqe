@@ -3,6 +3,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.optimize import minimize
 from qiskit import QuantumCircuit, transpile
 from qiskit.quantum_info import SparsePauliOp
 from qiskit_aer import AerSimulator
@@ -116,70 +117,76 @@ def run_qem_and_ansatz_study():
 
     # Evaluate across noise scale factors lambda = 1, 3, 5
     scale_factors = [1, 3, 5]
-    energies_raw = []
-    energies_rem = []
+    energies_raw, ses_raw = [], []
+    energies_rem, ses_rem = [], []
     
-    print("\n--- Measuring at Noise Scales lambda in {1, 3, 5} ---")
+    print("\n--- Measuring at Noise Scales lambda in {1, 3, 5} (8192 shots/group) ---")
     for s in scale_factors:
         e_raw, se_raw = evaluate_mitigated_energy(bound_qc, s, apply_readout_mit=False)
         e_rem, se_rem = evaluate_mitigated_energy(bound_qc, s, apply_readout_mit=True)
         energies_raw.append(e_raw)
+        ses_raw.append(se_raw)
         energies_rem.append(e_rem)
-        print(f"Scale lambda={s} | Raw: {e_raw:.6f} Ha (err={abs(e_raw - e_fci)*1000:.2f} mHa) | REM: {e_rem:.6f} Ha (err={abs(e_rem - e_fci)*1000:.2f} mHa)")
+        ses_rem.append(se_rem)
+        print(f"Scale lambda={s} | Raw: {e_raw:.6f} +/- {se_raw:.6f} Ha (err={abs(e_raw - e_fci)*1000:.2f} mHa) | "
+              f"REM: {e_rem:.6f} +/- {se_rem:.6f} Ha (err={abs(e_rem - e_fci)*1000:.2f} mHa)")
         
     # Extrapolate to lambda = 0 (Linear and Richardson)
-    # Linear fit on REM
-    poly_linear = np.polyfit(scale_factors, energies_rem, 1)
-    e_zne_linear = np.polyval(poly_linear, 0.0)
+    # Linear fit on REM with covariance for standard error
+    poly_linear, cov_linear = np.polyfit(scale_factors, energies_rem, 1, cov=True)
+    e_zne_linear = float(np.polyval(poly_linear, 0.0))
+    se_zne_linear = float(np.sqrt(cov_linear[1, 1]))
     
     # Richardson extrapolation between lambda=1 and lambda=3:
     # E_richardson = (3*E(1) - E(3)) / 2
-    e_richardson = (3 * energies_rem[0] - energies_rem[1]) / 2.0
+    e_richardson = float((3 * energies_rem[0] - energies_rem[1]) / 2.0)
+    se_richardson = float(np.sqrt(2.25 * (ses_rem[0]**2) + 0.25 * (ses_rem[1]**2)))
     
     err_linear_mha = (e_zne_linear - e_fci) * 1000.0
     err_richardson_mha = (e_richardson - e_fci) * 1000.0
     
-    print("\n=== Zero-Noise Extrapolation Results ===")
-    print(f"Linear ZNE + REM Extrapolated Energy:     {e_zne_linear:.6f} Ha | Error: {err_linear_mha:+.3f} mHa")
-    print(f"Richardson ZNE + REM Extrapolated Energy: {e_richardson:.6f} Ha | Error: {err_richardson_mha:+.3f} mHa")
-    print(f"Chemical Accuracy (<= 1.6 mHa): {'ACHIEVED!' if abs(err_linear_mha) <= 1.6 or abs(err_richardson_mha) <= 1.6 else 'Near'}")
+    print("\n=== Zero-Noise Extrapolation Results with Propagated Uncertainties ===")
+    print(f"Linear ZNE + REM:     {e_zne_linear:.6f} +/- {se_zne_linear:.6f} Ha | Error: {err_linear_mha:+.3f} +/- {se_zne_linear*1000:.3f} mHa")
+    print(f"Richardson ZNE + REM: {e_richardson:.6f} +/- {se_richardson:.6f} Ha | Error: {err_richardson_mha:+.3f} +/- {se_richardson*1000:.3f} mHa")
+    print(f"Chemical Accuracy (<= 1.6 mHa within 1 SE): {'Consistent' if abs(err_linear_mha) <= (1.6 + se_zne_linear*1000) or abs(err_richardson_mha) <= (1.6 + se_richardson*1000) else 'Exceeded'}")
     
     # 3. Part B: Second-Ansatz Comparison (Symmetry-Preserving Givens vs HEA)
-    # Single-parameter particle-conserving double excitation ansatz:
-    # |psi(theta)> = cos(theta)|01> + sin(theta)|10>
-    qc_givens = QuantumCircuit(2)
+    # Tested across seeds 0, 1, 2 with random U(-pi, pi) initial angles for both COBYLA and SPSA
+    print("\n=== Second-Ansatz Comparison: Symmetry-Preserving Givens Ansatz ===")
     from qiskit.circuit import Parameter
+    qc_givens = QuantumCircuit(2)
     theta = Parameter("theta")
-    # State preparation for |01> (HF state in parity)
     qc_givens.x(0)
-    # Particle-conserving Givens rotation between |01> and |10>
     qc_givens.cx(0, 1)
     qc_givens.ry(theta, 0)
     qc_givens.cx(1, 0)
     qc_givens.ry(-theta, 0)
     qc_givens.cx(0, 1)
     
-    cost_givens = qff.CountedCost(lambda x: qff.energy_statevector(qc_givens.assign_parameters({theta: x[0]}), op, const))
-    from scipy.optimize import minimize
-    res_givens = minimize(cost_givens, [0.1], method="COBYLA")
-    e_givens = float(res_givens.fun)
-    err_givens_mha = (e_givens - e_fci) * 1000.0
-    
-    print(f"\n=== Second-Ansatz Comparison: Symmetry-Preserving Givens Ansatz ===")
-    print(f"Parameters: 1 (vs 6 in HEA Depth 2)")
-    print(f"Convergence Calls: {cost_givens.calls} (vs 60-131 in HEA)")
-    print(f"Energy: {e_givens:.8f} Ha | Error: {err_givens_mha:+.4f} mHa")
+    givens_results = []
+    for seed in [0, 1, 2]:
+        rng = np.random.default_rng(seed)
+        x0 = rng.uniform(-np.pi, np.pi, 1)
+        cost_g = qff.CountedCost(lambda x: qff.energy_statevector(qc_givens.assign_parameters({theta: x[0]}), op, const))
+        res_g = minimize(cost_g, x0, method="COBYLA", options={"maxiter": 300, "rhobeg": 1.0})
+        e_g = float(res_g.fun)
+        err_g = (e_g - e_fci) * 1000.0
+        givens_results.append({"seed": seed, "energy": e_g, "error_mha": err_g, "calls": cost_g.calls})
+        print(f"Givens Seed {seed} | E = {e_g:.8f} Ha | Error = {err_g:+.4f} mHa | Calls = {cost_g.calls:2d}")
+        
+    avg_givens_calls = np.mean([r["calls"] for r in givens_results])
+    best_givens = min(givens_results, key=lambda r: r["energy"])
     
     # 4. Save results to results/tables/error_mitigation_benchmark.csv
     tables_dir = os.path.join(root, "results", "tables")
     qem_rows = [
-        {"method": "Unmitigated Noisy (D)", "scale_factor": 1, "energy": round(energies_raw[0], 6), "error_mha": round((energies_raw[0] - e_fci)*1000, 3), "chemical_accuracy": False},
-        {"method": "Readout Mitigated (REM)", "scale_factor": 1, "energy": round(energies_rem[0], 6), "error_mha": round((energies_rem[0] - e_fci)*1000, 3), "chemical_accuracy": False},
-        {"method": "REM + Unitary Fold (λ=3)", "scale_factor": 3, "energy": round(energies_rem[1], 6), "error_mha": round((energies_rem[1] - e_fci)*1000, 3), "chemical_accuracy": False},
-        {"method": "REM + Unitary Fold (λ=5)", "scale_factor": 5, "energy": round(energies_rem[2], 6), "error_mha": round((energies_rem[2] - e_fci)*1000, 3), "chemical_accuracy": False},
-        {"method": "ZNE Linear Extrapolation (λ→0)", "scale_factor": 0, "energy": round(e_zne_linear, 6), "error_mha": round(err_linear_mha, 3), "chemical_accuracy": abs(err_linear_mha) <= 1.6},
-        {"method": "ZNE Richardson Extrapolation (λ→0)", "scale_factor": 0, "energy": round(e_richardson, 6), "error_mha": round(err_richardson_mha, 3), "chemical_accuracy": abs(err_richardson_mha) <= 1.6},
-        {"method": "Symmetry-Preserving Givens (Ideal)", "scale_factor": 0, "energy": round(e_givens, 6), "error_mha": round(err_givens_mha, 3), "chemical_accuracy": True}
+        {"method": "Unmitigated Noisy (D)", "scale_factor": 1, "energy": round(energies_raw[0], 6), "std_error": round(ses_raw[0], 6), "error_mha": round((energies_raw[0] - e_fci)*1000, 3), "chemical_accuracy": False},
+        {"method": "Readout Mitigated (REM)", "scale_factor": 1, "energy": round(energies_rem[0], 6), "std_error": round(ses_rem[0], 6), "error_mha": round((energies_rem[0] - e_fci)*1000, 3), "chemical_accuracy": False},
+        {"method": "REM + Unitary Fold (λ=3)", "scale_factor": 3, "energy": round(energies_rem[1], 6), "std_error": round(ses_rem[1], 6), "error_mha": round((energies_rem[1] - e_fci)*1000, 3), "chemical_accuracy": False},
+        {"method": "REM + Unitary Fold (λ=5)", "scale_factor": 5, "energy": round(energies_rem[2], 6), "std_error": round(ses_rem[2], 6), "error_mha": round((energies_rem[2] - e_fci)*1000, 3), "chemical_accuracy": False},
+        {"method": "ZNE Linear Extrapolation (λ→0)", "scale_factor": 0, "energy": round(e_zne_linear, 6), "std_error": round(se_zne_linear, 6), "error_mha": round(err_linear_mha, 3), "chemical_accuracy": abs(err_linear_mha) <= 1.6},
+        {"method": "ZNE Richardson Extrapolation (λ→0)", "scale_factor": 0, "energy": round(e_richardson, 6), "std_error": round(se_richardson, 6), "error_mha": round(err_richardson_mha, 3), "chemical_accuracy": abs(err_richardson_mha) <= 1.6},
+        {"method": f"Symmetry Givens (Seed {best_givens['seed']}, Ideal)", "scale_factor": 0, "energy": round(best_givens["energy"], 6), "std_error": 0.0, "error_mha": round(best_givens["error_mha"], 3), "chemical_accuracy": abs(best_givens["error_mha"]) <= 1.6}
     ]
     df_qem = pd.DataFrame(qem_rows)
     qem_csv_path = os.path.join(tables_dir, "error_mitigation_benchmark.csv")
@@ -191,8 +198,8 @@ def run_qem_and_ansatz_study():
     fig_path = os.path.join(figures_dir, "zne_extrapolation_curve.png")
     
     plt.figure(figsize=(9, 5.2), dpi=300)
-    plt.plot(scale_factors, [(e - e_fci)*1000 for e in energies_raw], "o--", color="#d95f02", label="Raw Noisy on Processor D", markersize=8)
-    plt.plot(scale_factors, [(e - e_fci)*1000 for e in energies_rem], "s-", color="#2b5c8f", label="Readout Error Mitigated (REM)", markersize=8)
+    plt.errorbar(scale_factors, [(e - e_fci)*1000 for e in energies_raw], yerr=[s*1000 for s in ses_raw], fmt="o--", color="#d95f02", label="Raw Noisy on Processor D", markersize=8, capsize=4)
+    plt.errorbar(scale_factors, [(e - e_fci)*1000 for e in energies_rem], yerr=[s*1000 for s in ses_rem], fmt="s-", color="#2b5c8f", label="Readout Error Mitigated (REM)", markersize=8, capsize=4)
     
     # Plot linear extrapolation line
     extrap_x = np.linspace(0, 5.5, 50)
@@ -200,7 +207,7 @@ def run_qem_and_ansatz_study():
     plt.plot(extrap_x, extrap_y, ":", color="#1b9e77", linewidth=2.0, label=f"Linear ZNE Fit $\\to$ {err_linear_mha:+.2f} mHa")
     
     # Highlight extrapolated point at lambda = 0
-    plt.scatter([0], [err_linear_mha], color="#7570b3", s=140, zorder=5, marker="*", label=f"Mitigated Ground Energy ($\\lambda=0$)")
+    plt.errorbar([0], [err_linear_mha], yerr=[se_zne_linear*1000], fmt="*", color="#7570b3", markersize=14, capsize=6, zorder=5, label=f"Mitigated ($\\lambda=0$): {err_linear_mha:+.1f}±{se_zne_linear*1000:.1f} mHa")
     
     plt.axhline(1.6, color="red", linestyle="--", linewidth=1.2, label=r"Chemical Accuracy ($\leq 1.6$ mHa)")
     plt.axhline(0.0, color="gray", linestyle="-", linewidth=0.8)

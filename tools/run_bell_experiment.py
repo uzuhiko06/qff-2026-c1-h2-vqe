@@ -41,7 +41,7 @@ def run_bell_study():
                 "pair": f"({pair[0]}, {pair[1]})",
                 "pair_distance": res["pair_distance"],
                 "condition": cond_str,
-                "two_qubit_gates": res.get("cx", 1),
+                "two_qubit_gates": int(res["cx"]),
                 "XX": round(res["XX"], 6),
                 "XX_se": round(res["XX_se"], 6),
                 "YY": round(res["YY"], 6),
@@ -70,7 +70,7 @@ def run_bell_study():
     os.makedirs(figures_dir, exist_ok=True)
     fig_path = os.path.join(figures_dir, "bell_state_verification.png")
     
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5), dpi=300)
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5.2), dpi=300)
     
     # Plot 1: Parity Correlations XX, YY, ZZ
     x = np.arange(4)
@@ -93,8 +93,9 @@ def run_bell_study():
     ax1.set_ylabel("Parity Expectation Value", fontsize=11, fontweight="bold")
     ax1.set_title("Two-Qubit Pauli Correlations on Processor D", fontsize=12, fontweight="bold", pad=10)
     ax1.axhline(0, color="gray", linestyle="--", linewidth=0.8)
-    ax1.set_ylim(-1.15, 1.15)
-    ax1.legend(loc="upper right", framealpha=0.9)
+    ax1.set_ylim(-1.3, 1.35)
+    ax1.legend(loc="upper left", bbox_to_anchor=(0.02, 0.98), framealpha=0.9)
+    ax1.grid(axis="y", linestyle=":", alpha=0.6)
     ax1.grid(axis="y", linestyle=":", alpha=0.6)
     
     # Plot 2: State Fidelity Comparison

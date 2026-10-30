@@ -32,23 +32,19 @@ def run_architecture_benchmarks():
     qc_par_1, _ = qff.hardware_efficient_ansatz(2, reps=1)
     # 4. Parity 2-qubit HEA reps=2
     qc_par_2, _ = qff.hardware_efficient_ansatz(2, reps=2)
-    # 5. Full Molecular cross-orbital excitation (stress test)
+    # 5. Complete K4 molecular orbital interaction graph (all 6 orbital pairs)
     qc_mol = QuantumCircuit(4)
     for q in range(4):
         qc_mol.ry(0.5, q)
-    qc_mol.cx(0, 1)
-    qc_mol.cx(1, 3)
-    qc_mol.cx(3, 2)
-    qc_mol.cx(2, 0)
-    qc_mol.cx(0, 2)
-    qc_mol.cx(1, 3)
+    for u, v in [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]:
+        qc_mol.cx(u, v)
     
     benchmarks = [
         ("JW-4q-HEA-reps1", qc_jw_1),
         ("JW-4q-HEA-reps2", qc_jw_2),
         ("Parity-2q-HEA-reps1", qc_par_1),
         ("Parity-2q-HEA-reps2", qc_par_2),
-        ("Molecular-4q-Cross", qc_mol)
+        ("Molecular-4q-K4", qc_mol)
     ]
     
     rows = []
@@ -104,7 +100,7 @@ def run_architecture_benchmarks():
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4.8), dpi=300)
     
     # 1. CX Overhead comparison
-    circs = ["JW-4q-HEA-reps1", "JW-4q-HEA-reps2", "Molecular-4q-Cross"]
+    circs = ["JW-4q-HEA-reps1", "JW-4q-HEA-reps2", "Molecular-4q-K4"]
     x = np.arange(len(circs))
     width = 0.25
     

@@ -16,7 +16,7 @@ def plot_processor_graphs():
     
     processors = [
         ("Processor A (5Q Tree)", qff.PROCESSOR_A["edges"], 5, "processor_A_graph.png"),
-        ("Processor B (9Q Heavy-Hex)", qff.PROCESSOR_B["edges"], 9, "processor_B_graph.png"),
+        ("Processor B (9Q Planar Mesh)", qff.PROCESSOR_B["edges"], 9, "processor_B_graph.png"),
         (f"Processor D (6Q Chemistry Co-Design)", proc_d["edges"], proc_d["num_qubits"], "processor_D_graph.png"),
     ]
     

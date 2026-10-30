@@ -11,6 +11,6 @@ C1,Parity-2q-HEA-reps1,D,True,2,6,1,1,11,1,0,0
 C1,Parity-2q-HEA-reps2,A,True,2,5,2,2,18,2,0,0
 C1,Parity-2q-HEA-reps2,B,True,2,9,2,2,18,2,0,0
 C1,Parity-2q-HEA-reps2,D,True,2,6,2,2,18,2,0,0
-C1,Molecular-4q-Cross,A,True,4,5,6,12,16,12,2,6
-C1,Molecular-4q-Cross,B,True,4,9,6,6,9,5,0,0
-C1,Molecular-4q-Cross,D,True,4,6,6,6,9,5,0,0
+C1,Molecular-4q-K4,A,True,4,5,6,12,16,12,2,6
+C1,Molecular-4q-K4,B,True,4,9,6,9,12,8,1,3
+C1,Molecular-4q-K4,D,True,4,6,6,6,9,5,0,0
