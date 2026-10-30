@@ -16,6 +16,3 @@ ENV/
 .vscode/
 .idea/
 *.swp
-
-# Local convenience folder
-PHASE_TWO/
